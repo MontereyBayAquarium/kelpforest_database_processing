@@ -212,7 +212,8 @@ quad_build_combined <- quad_build %>%
 #Step 5 - export
 
 #write to 2024 intern folder
-
+output_file_path <- "/Users/jossmith/2024_KFI_projects/output/raw/recovery_data.csv"
+write.csv(quad_build_combined, file = output_file_path, row.names = FALSE)
 
 
 
