@@ -208,6 +208,11 @@ quad_build_combined <- quad_build %>%
   left_join(kelp_density, by = c("survey_date", "site", "site_type", "zone", "transect"))
 
 
+################################################################################
+#Step 5 - export
+
+#write to 2024 intern folder
+
 
 
 
