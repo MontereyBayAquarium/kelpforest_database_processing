@@ -2,7 +2,7 @@
 
 ################################################################################
 # About
-# 
+# data processing script written by JG.Smith jossmith@mbayaq.org
 
 
 
@@ -11,6 +11,8 @@
 #steps still required
 
 #1. Need to account for subsample kelp on line 179
+#2. Check survey date as part of final join
+#2. Check final join to identify data inconsistencies
 
 ################################################################################
 
@@ -81,7 +83,6 @@ quad_build <- quad_raw %>%
                   names_prefix = "upc_") %>%
       # Clean column names and remove any columns with 'na' in the name
       clean_names() %>%
-      select(-upc_na) %>%
   #clean up
   mutate(substrate = word(substrate, 1))
 
@@ -194,9 +195,17 @@ kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
 ################################################################################
 #Step 4 - join everything
 
+#inspect for join
+str(quad_build) #base df
+str(urch_size_summary)
+str(macro_density)
+str(kelp_density)
 
 
-
+quad_build_combined <- quad_build %>%
+  left_join(urch_size_summary, by = c("survey_date", "site", "site_type", "zone", "transect")) %>%
+  left_join(macro_density, by = c("survey_date", "site", "site_type", "zone", "transect")) %>%
+  left_join(kelp_density, by = c("survey_date", "site", "site_type", "zone", "transect"))
 
 
 
