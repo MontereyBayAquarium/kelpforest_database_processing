@@ -16,6 +16,8 @@ rm(list=ls())
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
 
+#Set paths
+datout <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/processed"
 
 #read margin
 margin_orig <- read_sheet(
@@ -107,7 +109,8 @@ reco_build1 <- recovery_orig %>%
 ################################################################################
 #Step 3: export
 
+write_csv(marge_build1, file.path(datout, "margin_survey_metadata.csv")) #last write 28 Oct 2024
 
-
+write_csv(reco_build1, file.path(datout, "recovery_survey_metadata.csv")) #last write 28 Oct 2024
 
 
