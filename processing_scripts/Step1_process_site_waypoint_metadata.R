@@ -103,14 +103,15 @@ reco_build1 <- recovery_orig %>%
                                                                       actual_longitude, notes) %>%
   rename(site_long = site_long_7,
          latitude = actual_latitude,
-         longitude = actual_longitude)
+         longitude = actual_longitude,
+         zone = transect) 
 
 
 ################################################################################
 #Step 3: export
 
-write_csv(marge_build1, file.path(datout, "margin_survey_metadata.csv")) #last write 28 Oct 2024
+write_csv(marge_build1, file.path(datout, "margin_survey_metadata.csv")) #last write 29 Oct 2024
 
-write_csv(reco_build1, file.path(datout, "recovery_survey_metadata.csv")) #last write 28 Oct 2024
+write_csv(reco_build1, file.path(datout, "recovery_survey_metadata.csv")) #last write 29 Oct 2024
 
 
