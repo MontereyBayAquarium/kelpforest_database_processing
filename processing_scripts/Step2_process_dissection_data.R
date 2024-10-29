@@ -1,8 +1,11 @@
 
 
 ################################################################################
-# About
-# 
+# jossmith@mbayaq.org
+
+#About
+#This is the processing script used to clean raw entered dissection data. 
+#The output is a cleaned data table
 
 
 ################################################################################
@@ -11,6 +14,9 @@ rm(list=ls())
 
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
+
+#set paths
+datout <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/processed"
 
 #read urchin data
 urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
@@ -47,7 +53,9 @@ gonad_dat <- urch_dat_orig %>%
   select(date_collected, date_fixed, site_number, transect, treatment, species, 
          sample_number, sex, test_height_mm, test_diameter_mm, animal_wet_mass_g,
          animal_24hr_mass_g, gonad_mass_g, soft_tissue_mass_g) %>%
+  ###################
   # Clean up site name
+  ###################
   mutate(
     site_number = gsub("-", "_", site_number),
     site_number = gsub("REC_", "REC", site_number),
@@ -94,7 +102,9 @@ gonad_dat <- urch_dat_orig %>%
   ) %>%
   # Reorder to place survey_type before site_number
   relocate(survey_type, .before = site_number) %>%
-  #fix transect
+  ###################
+  #clean transect
+  ###################
   mutate(transect = toupper(transect),
          transect = case_when(
            transect == "01" ~ "1", 
@@ -114,29 +124,67 @@ gonad_dat <- urch_dat_orig %>%
   relocate(zone, .after = site_type) %>%
   #drop unknown entries
   filter(!transect %in% c("D", "REC10_FOR", "REC11-FOR","029")) %>%
-  #fix species
+  ###################
+  #clean species
+  ###################
   mutate(species = ifelse(species == "PUR","purple_urchin",species)) %>%
-  # Replace "NULL" with NA and remove leading and trailing zeros in sample_number
+  #drop rows where all data are NA
+  filter(!if_all(11:17, is.na))%>%
+  ###################
+  # clean sample number
+  ###################
   mutate(
     sample_number = ifelse(sample_number %in% c("NULL"), NA, sample_number),              # Replace "NULL" with NA
-    sample_number = gsub("^0+|0+$", "", sample_number)         # Remove leading and trailing zeros
-  )
-  
-
-####### OLD -- still working through code below
-
+    sample_number = gsub("^0+", "", sample_number),        # Remove leading and trailing zeros
+    sample_number = as.numeric(na_if(sample_number, "NA"))) %>%
+  #assign new sample numbers for all surveys that are not margin surveys. Sample
+  #numbers were originally created by dissection volunteers but are irrelevant
+  #EXCEPT for margin surveys, where the sample number is the tag number of a sea
+  #urchin collected as a specific location on transect. 
+  group_by(date_collected, date_fixed, survey_type, zone, transect, treatment, species) %>%
+  mutate(
+    sample_number_renumbered = if_else(
+      survey_type == "Margin",
+      sample_number,
+      row_number()
+    )
+  ) %>%
+  ungroup() %>%
+  #drop old sample numbers
+  select(-sample_number)%>%
+  rename(sample_number = sample_number_renumbered) %>%
+  ###################
+  #remove outliers that were clearly entered wrong 
+  ###################
+  filter(test_height_mm < 100 | is.na(test_height_mm),
+         test_diameter_mm < 100| is.na(test_diameter_mm),
+         soft_tissue_mass_g < 80| is.na(soft_tissue_mass_g)) %>%
+  #drop columns
+  select(-animal_wet_mass_g) %>%
+  ###################
+  #remove outliers that were clearly entered wrong 
+  ###################
   # Add small constant to gonad data
-
   mutate(gonad_mass_g = gonad_mass_g + 0.000001) %>%
   # Calculate gonad index
   mutate(gonad_index = (gonad_mass_g / animal_24hr_mass_g) * 100) %>%
-  filter(gonad_index < 100)%>%
-  # Calculate mean gonad index for each site and transect
-  group_by(date_collected, site_number, site_type, transect, species) %>%
-  summarize(mean_GI = mean(gonad_index, na.rm = TRUE)) %>%
-  # Pivot data wider by species
-  pivot_wider(names_from = species, values_from = mean_GI) %>%
-  mutate(site = factor(site_number),
-         zone = factor(transect),
-         site_type = factor(site_type),
-         site_number = factor(site_number))
+  filter(gonad_index < 40) #gonad index should never exceed 40, so these values are incorrect
+                          #filtering below 40 results in max GI of 25% which is much more realistic
+  
+
+#check 
+hist(gonad_dat$test_height_mm)
+hist(gonad_dat$test_diameter_mm)
+hist(gonad_dat$animal_24hr_mass_g)
+hist(gonad_dat$gonad_mass_g)
+hist(gonad_dat$soft_tissue_mass_g)
+hist(gonad_dat$gonad_index)
+
+################################################################################
+#export
+
+write_csv(gonad_dat, file.path(datout, "dissection_data_cleaned.csv")) #last write 29 Oct 2024
+
+
+
+
