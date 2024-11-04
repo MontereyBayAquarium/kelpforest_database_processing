@@ -31,7 +31,7 @@ swath_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8
 
 
 urch_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 3,col_types = "c" ) %>% clean_names()
+                       sheet = 4,col_types = "c" ) %>% clean_names()
 
 #site metdata
 margin_meta <- read_csv(file.path(datdir, "processed/margin_survey_metadata.csv"))
@@ -48,8 +48,19 @@ upc_build1 <- upc_raw %>%
   slice(-1) %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   # Apply standard site naming
-  mutate(site = str_replace(site, "([A-Za-z]+)([0-9]+)", "\\1_\\2"),
-         site = str_replace(site, "Mar", "MAR")) %>%
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
   # Set data types
   mutate(
     name_of_data_enterer = as.factor(name_of_data_enterer),
@@ -153,7 +164,8 @@ upc_build2 <- upc_build1 %>%
   rename(sub_bedrock = bedrock,
          sub_boulder = boulder,
          sub_cobble = cobble,
-         sub_sand = sand) 
+         sub_sand = sand) %>%
+  data.frame()
 
 ##useful for checking
 nrow(upc_raw) - 1 == nrow(upc_build2)
@@ -184,8 +196,19 @@ urch_size_build1 <- urch_size_raw %>%
   slice(-1) %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
   # Apply standard site naming
-  mutate(site = str_replace(site, "([A-Za-z]+)([0-9]+)", "\\1_\\2"),
-         site = str_replace(site, "Mar", "MAR")) %>%
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
   # Set data types
   mutate(
     name_of_data_enterer = as.factor(name_of_data_enterer),
@@ -234,7 +257,8 @@ urch_size_build1 <- urch_size_raw %>%
   mutate(
     size_cm = as.numeric(gsub("cm", "", size))
   ) %>%
-  select(-size)  
+  select(-size)%>%
+  data.frame()
 
 
 
@@ -249,8 +273,19 @@ swath_build1 <- swath_raw %>%
 slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
   # Apply standard site naming
-  mutate(site = str_replace(site, "([A-Za-z]+)([0-9]+)", "\\1_\\2"),
-         site = str_replace(site, "Mar", "MAR")) %>%
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
   # Set data types
   mutate(
     name_of_data_enterer = as.factor(name_of_data_enterer),
@@ -295,7 +330,10 @@ slice(-1) %>%
     segment == "70-75M" ~ 75,
     segment == "75-80M" ~ 80,
     TRUE ~ NA_real_  # Set NA for any unexpected values
-  ))
+  )) %>%
+  #drop field that are not needed
+  select(-depth_start, -depth_end, -observer, -buddy, -name_of_data_enterer,
+         -heading_out)
 
 
 #process macrocystis first -- no subsampling 
@@ -303,12 +341,12 @@ slice(-1) %>%
 mac_build1 <- swath_build1 %>% filter(species == "Macrocystis pyrifera") %>%
                 select(-subsample_meter)
 
-mac_n_plant <- mac_build1 %>% group_by(site, date, heading_out,
-                                       observer, buddy, transect, depth_start,
-                                       depth_end, segment, species) %>%
+mac_n_plant <- mac_build1 %>% group_by(site, date, transect, segment, species) %>%
                summarize(n_macro_plants = n(),
-                         avg_maco_stipe_density = mean(stipe_counts_macrocystis_only, na.rm=TRUE),
-                         sd_macro_stipe = sd(stipe_counts_macrocystis_only, na.rm=TRUE))
+                         avg_macro_stipe_density = mean(stipe_counts_macrocystis_only, na.rm=TRUE),
+                         sd_macro_stipe = sd(stipe_counts_macrocystis_only, na.rm=TRUE)) %>%
+  data.frame() %>%
+  select(-species)
 
 #process other macroalgae that were subsampled
 algae_build1 <- swath_build1 %>% filter(species != "Macrocystis pyrifera") %>%
@@ -340,22 +378,137 @@ if (nrow(duplicates) > 0) {
 #drop rows that were enterred incorrectly -- checked in raw data by JS
 algae_build2 <- algae_build1 %>%
   filter(
-    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_03" & date == as.Date("2024-07-09") & heading_out == 50 & observer == "Morgan" & transect == 1 & segment == 55 & species == "Stephanocystis" & density == 4),
-    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_09" & date == as.Date("2024-07-17") & heading_out == 220 & observer == "Quist" & transect == 3 &  segment== 65 & species == "Stephanocystis" & density == 1),
-    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_09" & date == as.Date("2024-07-17") & heading_out == 220 & observer == "Morgan" & transect == 2 & segment == 70 & species == "Laminaria setchellii" & density == 6),
-    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_04" & date == as.Date("2024-06-24") & heading_out == 30 & observer == "Mendez" & transect == 3 & segment == 70 & species == "Pterygophora" & density == 2)
+    !(site == "MAR_03" & date == as.Date("2024-07-09") & transect == 1 & segment == 55 & species == "Stephanocystis" & density == 4),
+    !(site == "MAR_09" & date == as.Date("2024-07-17") & transect == 3 &  segment== 65 & species == "Stephanocystis" & density == 1),
+    !(site == "MAR_09" & date == as.Date("2024-07-17") & transect == 2 & segment == 70 & species == "Laminaria setchellii" & density == 6),
+    !(site == "MAR_04" & date == as.Date("2024-06-24")& transect == 3 & segment == 70 & species == "Pterygophora" & density == 2)
   ) %>%
+  #drop columns not needed
+  select(-subsample_meter) %>%
   #make wider
   mutate(species = paste0("den_", species)) %>%  # Add "den_" prefix to species names
-  pivot_wider(names_from = species, values_from = density, values_fill = 0) %>%
-  clean_names()
+  pivot_wider(names_from = species, values_from = density) %>%
+  clean_names() 
 
+################################################################################
+#Step 4 - process urchin density
+
+urch_den_build1 <- urch_den_raw %>%
+  #########################
+    # General tidying
+    #########################
+    # Remove example first row and classifiers
+    slice(-1) %>%
+    select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
+    # Apply standard site naming
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+    # Set data types
+    mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
+    transect = as.numeric(transect),
+    depth_start = as.numeric(depth_start),
+    depth_end = as.numeric(depth_end),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    purple_density = as.numeric(purple_density),
+    subsample_meter_13 = as.numeric(subsample_meter_13),
+    purple_conceiled = as.numeric(purple_conceiled),
+    red_density = as.numeric(red_density),
+    subsample_meter_16 = as.numeric(subsample_meter_16),
+    red_conceiled = as.numeric(red_conceiled)
+  ) %>%
+  # Convert depths to meters if depth_units is Feet
+  mutate(
+    depth_start = if_else(depth_units == "Feet", depth_start * 0.3048, depth_start),
+    depth_end = if_else(depth_units == "Feet", depth_end * 0.3048, depth_end)
+  ) %>%
+  # Drop depth units
+  select(-depth_units) %>%
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #extrapolate densities
+  mutate(purple_urchin_density = purple_density*(5/subsample_meter_13),
+         red_urchin_density = red_density*(5/subsample_meter_16),
+         purple_urchin_conceiled_density = purple_conceiled*(5/subsample_meter_13),
+         red_urchin_conceiled_density = red_conceiled*(5/subsample_meter_16))%>%
+  #drop columns
+  select(-purple_density, -red_density, -subsample_meter_13, -subsample_meter_16,
+         -purple_conceiled, -red_conceiled) %>%
+  #fix one instance where red conceiled density is > total counts
+  mutate(red_urchin_conceiled_density = if_else(
+    is.na(red_urchin_conceiled_density) | is.na(red_urchin_density),
+    red_urchin_conceiled_density,  # Keep NA if either is NA
+    if_else(red_urchin_conceiled_density > red_urchin_density, 
+            red_urchin_density, 
+            red_urchin_conceiled_density)
+  ))
+  
+
+
+#check
+any(urch_den_build1$purple_urchin_conceiled_density > urch_den_build1$purple_urchin_density)
+any(urch_den_build1$red_urchin_conceiled_density > urch_den_build1$red_urchin_density)
 
 
 ################################################################################
 #join everything
 
-#for join: upc_build2, urch_size_build1, mac_n_plant, algae_build2
+#for join: upc_build2, urch_size_build1, mac_n_plant, algae_build2, urch_den_build1
+
+
+#upc_build2 is the base df with complete segments
+sapply(upc_build2[, c("site","date","transect","segment")], class)
+sapply(mac_n_plant[, c("site","date","transect","segment")], class)
+
+
+margin_join1 <- left_join(upc_build2, mac_n_plant, by = c("site","date","transect",
+                                                          "segment")) %>%
+                #replace NAs with true zeros
+                  mutate(
+                    n_macro_plants = replace_na(n_macro_plants, 0),
+                    avg_macro_stipe_density = replace_na(avg_macro_stipe_density, 0),
+                    sd_macro_stipe = replace_na(sd_macro_stipe, 0)
+                  )
+
+margin_join2 <- left_join(margin_join1, algae_build2, by = c("site","date","transect",
+                                                             "segment"))
+
+
 
 
 
