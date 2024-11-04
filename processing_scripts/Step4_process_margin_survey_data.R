@@ -22,19 +22,19 @@ upc_raw <- read_sheet(
   clean_names()
 
 urch_size_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                         sheet = 2) %>% clean_names()
+                         sheet = 2, col_types = "c" ) %>% clean_names()
 
 
 swath_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 3) %>% clean_names()
+                       sheet = 3,col_types = "c" ) %>% clean_names()
 
 
 
 urch_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 3) %>% clean_names()
+                       sheet = 3,col_types = "c" ) %>% clean_names()
 
 #site metdata
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_survey_metadata.csv"))
+margin_meta <- read_csv(file.path(datdir, "processed/margin_survey_metadata.csv"))
 
 
 ################################################################################
@@ -155,6 +155,207 @@ upc_build2 <- upc_build1 %>%
          sub_cobble = cobble,
          sub_sand = sand) 
 
+##useful for checking
+nrow(upc_raw) - 1 == nrow(upc_build2)
+
+duplicates <- upc_build2 %>%
+  group_by(site, date, transect, segment) %>%
+  filter(n() > 1) %>%
+  ungroup()
+
+# Check if any duplicates exist
+if (nrow(duplicates) > 0) {
+  print("Duplicate segments found within the same site, date, and transect:")
+  print(duplicates)
+} else {
+  print("No duplicate segments found within each site, date, and transect.")
+}
+
+
+################################################################################
+#Step 2 - process urchin size data
+
+
+urch_size_build1 <- urch_size_raw %>%
+  #########################
+  # General tidying
+  #########################
+  # Remove example first row and classifiers
+  slice(-1) %>%
+  select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
+  # Apply standard site naming
+  mutate(site = str_replace(site, "([A-Za-z]+)([0-9]+)", "\\1_\\2"),
+         site = str_replace(site, "Mar", "MAR")) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
+    transect = as.numeric(transect),
+    depth_start = as.numeric(depth_start),
+    depth_end = as.numeric(depth_end),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
+    size = as.factor(size),
+    count = as.numeric(count)
+  ) %>%
+  # Convert depths to meters if depth_units is Feet
+  mutate(
+    depth_start = if_else(depth_units == "Feet", depth_start * 0.3048, depth_start),
+    depth_end = if_else(depth_units == "Feet", depth_end * 0.3048, depth_end)
+  ) %>%
+  # Drop depth units
+  select(-depth_units) %>%
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #make size numeric
+  mutate(
+    size_cm = as.numeric(gsub("cm", "", size))
+  ) %>%
+  select(-size)  
+
+
+
+################################################################################
+#Step 3 - process kelp swath
+
+swath_build1 <- swath_raw %>%
+  #########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
+  select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
+  # Apply standard site naming
+  mutate(site = str_replace(site, "([A-Za-z]+)([0-9]+)", "\\1_\\2"),
+         site = str_replace(site, "Mar", "MAR")) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
+    transect = as.numeric(transect),
+    depth_start = as.numeric(depth_start),
+    depth_end = as.numeric(depth_end),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
+    stipe_counts_macrocystis_only = as.numeric(stipe_counts_macrocystis_only),
+    count = as.numeric(count),
+    subsample_meter = as.numeric(subsample_meter)
+  ) %>%
+  # Convert depths to meters if depth_units is Feet
+  mutate(
+    depth_start = if_else(depth_units == "Feet", depth_start * 0.3048, depth_start),
+    depth_end = if_else(depth_units == "Feet", depth_end * 0.3048, depth_end)
+  ) %>%
+  # Drop depth units
+  select(-depth_units) %>%
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  ))
+
+
+#process macrocystis first -- no subsampling 
+
+mac_build1 <- swath_build1 %>% filter(species == "Macrocystis pyrifera") %>%
+                select(-subsample_meter)
+
+mac_n_plant <- mac_build1 %>% group_by(site, date, heading_out,
+                                       observer, buddy, transect, depth_start,
+                                       depth_end, segment, species) %>%
+               summarize(n_macro_plants = n(),
+                         avg_maco_stipe_density = mean(stipe_counts_macrocystis_only, na.rm=TRUE),
+                         sd_macro_stipe = sd(stipe_counts_macrocystis_only, na.rm=TRUE))
+
+#process other macroalgae that were subsampled
+algae_build1 <- swath_build1 %>% filter(species != "Macrocystis pyrifera") %>%
+                select(-stipe_counts_macrocystis_only) %>%
+                #4 cases where subsample meter is < 1 m -- change to 1 m because <1 is unrealistic
+                mutate(subsample_meter = ifelse(subsample_meter < 1, 1, subsample_meter)) %>%
+                #convert subsample to estimated total counts
+                mutate(density = count*(5/subsample_meter))%>%
+                #clean up
+                  mutate(
+                    species = trimws(gsub("\\s*\\(.*?\\)", "", species))
+                  ) %>%
+                select(-count) 
+
+###checking
+duplicates <- algae_build1 %>%
+  group_by(site, date, transect, segment, species) %>%
+  filter(n() > 1) %>%
+  ungroup()
+
+# Check if any duplicates exist
+if (nrow(duplicates) > 0) {
+  print("Duplicate segments found within the same site, date, and transect:")
+  print(duplicates)
+} else {
+  print("No duplicate segments found within each site, date, and transect.")
+}
+
+#drop rows that were enterred incorrectly -- checked in raw data by JS
+algae_build2 <- algae_build1 %>%
+  filter(
+    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_03" & date == as.Date("2024-07-09") & heading_out == 50 & observer == "Morgan" & transect == 1 & segment == 55 & species == "Stephanocystis" & density == 4),
+    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_09" & date == as.Date("2024-07-17") & heading_out == 220 & observer == "Quist" & transect == 3 &  segment== 65 & species == "Stephanocystis" & density == 1),
+    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_09" & date == as.Date("2024-07-17") & heading_out == 220 & observer == "Morgan" & transect == 2 & segment == 70 & species == "Laminaria setchellii" & density == 6),
+    !(name_of_data_enterer == "Rodrigo Mendez" & site == "MAR_04" & date == as.Date("2024-06-24") & heading_out == 30 & observer == "Mendez" & transect == 3 & segment == 70 & species == "Pterygophora" & density == 2)
+  ) %>%
+  #make wider
+  mutate(species = paste0("den_", species)) %>%  # Add "den_" prefix to species names
+  pivot_wider(names_from = species, values_from = density, values_fill = 0) %>%
+  clean_names()
+
+
+
+################################################################################
+#join everything
+
+#for join: upc_build2, urch_size_build1, mac_n_plant, algae_build2
 
 
 
