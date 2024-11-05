@@ -560,7 +560,7 @@ margin_join4 <- left_join(margin_join3, urch_size_build2, by = c("site","date","
 write_csv(urch_size_build1, file.path(datadir, "processed/margin_urchin_size_fq.csv")) #last write 5 Nov 2024
 
 
-
+write_csv(margin_join4, file.path(datadir, "processed/margin_combined_data.csv")) #last write 5 Nov 2024
 
 
 
