@@ -34,7 +34,7 @@ urch_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7
                        sheet = 4,col_types = "c" ) %>% clean_names()
 
 #site metdata
-margin_meta <- read_csv(file.path(datadir, "processed/margin_survey_metadata.csv"))
+margin_meta <- read_csv(file.path(datadir, "processed/margin_site_table.csv"))
 
 
 ################################################################################
