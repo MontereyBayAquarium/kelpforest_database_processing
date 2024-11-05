@@ -5,6 +5,12 @@
 # data processing script written by JG.Smith jossmith@mbayaq.org
 
 
+
+
+#To-do:
+
+#1. Need to figure out whether urchin size NAs are true zeros
+
 ################################################################################
 
 rm(list=ls())
@@ -260,6 +266,19 @@ urch_size_build1 <- urch_size_raw %>%
   select(-size, -name_of_data_enterer)%>%
   data.frame()
 
+#prepare df for join 
+urch_size_build2 <- urch_size_build1 %>%
+                    select(-heading_out, -observer, -buddy, -depth_start,
+                           -depth_end) %>%
+                    #make long format
+                    uncount(count) %>%
+                    #calculate summary stats for join
+                    group_by(site, date, transect, segment, species) %>%
+                    summarize(sz_mean = mean(size_cm, na.rm=TRUE),
+                              sz_sd = sd(size_cm, na.rm=TRUE)) %>%
+                    #make wider
+                    pivot_wider(names_from = "species", values_from = c("sz_mean","sz_sd")) %>%
+                    clean_names()
 
 
 ################################################################################
@@ -529,6 +548,10 @@ margin_join3 <- left_join(margin_join2, urch_den_build1, by = c("site","date","t
                          den_red_urchin = red_urchin_density,
                          den_purple_conceiled = purple_urchin_conceiled_density,
                          den_red_conceiled = red_urchin_conceiled_density)
+
+margin_join4 <- left_join(margin_join3, urch_size_build2, by = c("site","date","transect",
+                                                                 "segment"))
+
 
 
 ################################################################################
