@@ -168,7 +168,8 @@ urch_build <- urchin_raw %>%
                                date_surveyed),
          site_type = if_else(site_name == "REC12" & zone == 'Shallow', "BAR",site_type)
          ) %>%
-  anti_join(reco_meta, by = c("site_name", "site_type", "zone", "date_surveyed"))
+  semi_join(reco_meta, by = c("site_name", "site_type", "zone", "date_surveyed"))
+
 #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
 #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
 
