@@ -51,20 +51,37 @@ marge_build1 <- margin_orig %>%
          ) %>%
          #drop sites that were never surveyed
          filter((in_stack =="yes")) %>% #sites where in_stack == yes means they were in the raw data
+         rename(site = site_name) %>%
+          # Apply standard site naming
+          mutate(
+            # Use a function within str_replace to process each match
+            site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+              # Extract letters and numbers
+              parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+              letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+              numbers <- parts[, 3]
+              # Pad numbers with leading zero
+              numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+              # Combine parts with underscore
+              paste0(letters, "_", numbers_padded)
+            })
+          ) %>%
          # Replace date_surveyed with resite_date if resite_date is not NA
-         mutate(date_surveyed = coalesce(resite_date, date_surveyed),
+         rename(original_survey_date = date_surveyed) %>%
+         mutate(resite_conducted = ifelse(is.na(resite_date), "no", "yes"),
+                official_survey_date = coalesce(resite_date, original_survey_date),
                 #fix lat/longs
                 actual_latitude = coalesce(actual_latitude, target_latitude),
-                actual_longitude = coalesce(actual_longitude, target_longitude),
-                # Remove underscores from site_name
-                site_name = str_replace_all(site_name, "_", "")
-                ) %>%
+                actual_longitude = coalesce(actual_longitude, target_longitude)) %>%
          #drop columns and rename
-         select(-target_latitude, -target_longitude, -resite_needed, 
-                -resite_date, -in_stack) %>% select(1:8)
+         select(-target_latitude, -target_longitude, -resite_needed, -in_stack) %>%
+         select(survey_type, region, site, transect, latitude = actual_latitude,
+                longitude = actual_longitude, official_survey_date, original_survey_date, resite_date,
+                resite_conducted, notes)
+         
 
 ################################################################################
-#Step 2: process margin data
+#Step 2: process recovery data
 
 reco_build1 <- recovery_orig %>%
   #drop columns
@@ -91,27 +108,43 @@ reco_build1 <- recovery_orig %>%
   #drop sites that were never surveyed
   filter((in_stack =="yes")) %>% #sites where in_stack == yes means they were in the raw data
   # Replace date_surveyed with resite_date if resite_date is not NA
-  mutate(date_surveyed = coalesce(resite_date, original_date_surveyed),
+  rename(site = site_name)%>%
+  # Apply standard site naming
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  rename(original_survey_date = original_date_surveyed)%>%
+  mutate(resite_conducted = ifelse(is.na(resite_date), "no", "yes"),
+         official_survey_date = coalesce(resite_date, original_survey_date),
          #fix lat/longs
          actual_latitude = coalesce(actual_latitude, target_latitude),
          actual_longitude = coalesce(actual_longitude, target_longitude)
   ) %>%
   #drop columns and rename
   select(-target_latitude, -target_longitude, 
-         -resite_date, -original_date_surveyed, -in_stack) %>% select(1:6, date_surveyed,
-                                                                      actual_latitude,
-                                                                      actual_longitude, notes) %>%
-  rename(site_long = site_long_7,
-         latitude = actual_latitude,
-         longitude = actual_longitude,
-         zone = transect) 
-
+         -in_stack) %>% select(
+           survey_type, region, site, site_type, site_long = site_long_7,
+           zone = transect, latitude = actual_latitude, longitude = actual_longitude,
+           official_survey_date, original_survey_date, resite_date, resite_conducted,
+           notes
+         )
+       
 
 ################################################################################
 #Step 3: export
 
-write_csv(marge_build1, file.path(datout, "margin_survey_metadata.csv")) #last write 29 Oct 2024
+write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 5 Nov 2024
 
-write_csv(reco_build1, file.path(datout, "recovery_survey_metadata.csv")) #last write 29 Oct 2024
+write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 29 Oct 2024
 
 

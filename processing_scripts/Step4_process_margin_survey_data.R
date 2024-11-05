@@ -5,12 +5,6 @@
 # data processing script written by JG.Smith jossmith@mbayaq.org
 
 
-
-
-#To-do:
-
-#1. Need to figure out whether urchin size NAs are true zeros
-
 ################################################################################
 
 rm(list=ls())
@@ -40,7 +34,7 @@ urch_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7
                        sheet = 4,col_types = "c" ) %>% clean_names()
 
 #site metdata
-margin_meta <- read_csv(file.path(datdir, "processed/margin_survey_metadata.csv"))
+margin_meta <- read_csv(file.path(datadir, "processed/margin_survey_metadata.csv"))
 
 
 ################################################################################
@@ -550,7 +544,7 @@ margin_join3 <- left_join(margin_join2, urch_den_build1, by = c("site","date","t
                          den_red_conceiled = red_urchin_conceiled_density)
 
 margin_join4 <- left_join(margin_join3, urch_size_build2, by = c("site","date","transect",
-                                                                 "segment"))
+                                                                 "segment")) 
 
 
 
