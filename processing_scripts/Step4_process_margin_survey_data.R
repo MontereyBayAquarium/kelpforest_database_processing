@@ -13,7 +13,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstacksh
 gs4_auth()
 
 #set dir
-datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
+datadir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
 
 #read data
 upc_raw <- read_sheet(
@@ -257,7 +257,7 @@ urch_size_build1 <- urch_size_raw %>%
   mutate(
     size_cm = as.numeric(gsub("cm", "", size))
   ) %>%
-  select(-size)%>%
+  select(-size, -name_of_data_enterer)%>%
   data.frame()
 
 
@@ -476,7 +476,11 @@ urch_den_build1 <- urch_den_raw %>%
     if_else(red_urchin_conceiled_density > red_urchin_density, 
             red_urchin_density, 
             red_urchin_conceiled_density)
-  ))
+  )) %>%
+  #drop field that are not needed
+  select(-depth_start, -depth_end, -observer, -buddy, -name_of_data_enterer,
+         -heading_out)
+
   
 
 
@@ -506,7 +510,33 @@ margin_join1 <- left_join(upc_build2, mac_n_plant, by = c("site","date","transec
                   )
 
 margin_join2 <- left_join(margin_join1, algae_build2, by = c("site","date","transect",
-                                                             "segment"))
+                                                             "segment")) %>%
+                  #replace NAs with true zeros
+                  mutate(
+                    den_stephanocystis = replace_na(den_stephanocystis, 0),
+                    den_nereocystis = replace_na(den_nereocystis, 0),
+                    den_laminaria_setchellii = replace_na(den_laminaria_setchellii, 0),
+                    den_pterygophora = replace_na(den_pterygophora, 0),
+                    den_costaria_costata = replace_na(den_costaria_costata, 0),
+                    den_mac_stump = replace_na(den_mac_stump, 0),
+                    den_lam_stump = replace_na(den_lam_stump,0)
+                  )
+
+margin_join3 <- left_join(margin_join2, urch_den_build1, by = c("site","date","transect",
+                                                                "segment")) %>%
+                  #clean names to match scheme
+                  rename(den_purple_urchin = purple_urchin_density,
+                         den_red_urchin = red_urchin_density,
+                         den_purple_conceiled = purple_urchin_conceiled_density,
+                         den_red_conceiled = red_urchin_conceiled_density)
+
+
+################################################################################
+#export
+
+write_csv(urch_size_build1, file.path(datadir, "processed/margin_urchin_size_fq.csv")) #last write 5 Nov 2024
+
+
 
 
 
