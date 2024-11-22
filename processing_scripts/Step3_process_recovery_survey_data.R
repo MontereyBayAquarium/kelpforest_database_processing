@@ -26,7 +26,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstacksh
 gs4_auth()
 
 #set dir
-datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
+datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
 
 #read data
 quad_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
@@ -40,7 +40,16 @@ kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUD
                        sheet = 3) %>% clean_names()
 
 #site metdata
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_survey_metadata.csv"))
+reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
+              rename(survey_date = official_survey_date)%>%
+              #recreate factors for join
+              mutate(
+                survey_type = as.factor(survey_type),
+                region = as.factor(region),
+                site = as.factor(site),
+                site_type = as.factor(site_type),
+                site_long = as.factor(site_long)
+              )
 
 ################################################################################
 #Step 1 - process quadrat data
@@ -65,7 +74,9 @@ quad_build <- quad_raw %>%
     quadrat = as.numeric(quadrat),
     substrate = factor(substrate)
   ) %>%
+  ##############################################################################
   # Extrapolate densities for subsamples
+  ##############################################################################
   mutate(
     purple_urchin_densitym2 = purple_urchins * (4 / purple_quadrants_sampled),
     purple_urchin_conceiledm2 = purple_conceiled * (4 / purple_quadrants_sampled),
@@ -78,7 +89,9 @@ quad_build <- quad_raw %>%
   select(-purple_urchins, -purple_conceiled, -purple_quadrants_sampled,
          -red_urchins, -red_conceiled, -red_quadrants_sampled,
          -tegula, -tegula_quadrants_sampled, -pomaulax, -pomaulax_quadrants_sampled) %>%
+  ##############################################################################
   #calculate upc
+  ##############################################################################
   # Step 1: Convert upc1 through upc8 columns to long format
   pivot_longer(cols = starts_with("upc"), names_to = "upc", values_to = "species") %>%
   # Group by quadrat and calculate total UPC points per quadrat
@@ -100,21 +113,40 @@ quad_build <- quad_raw %>%
   clean_names() %>%
   #clean up
   mutate(substrate = word(substrate, 1)) %>%
-  #fix conceiled counts
+  ##############################################################################
+  #fix conceiled counts -- conceiled should never be > total counts
+  ##############################################################################
   mutate(purple_urchin_conceiledm2 = ifelse(purple_urchin_conceiledm2 > purple_urchin_densitym2,
-                                            purple_urchin_densitym2, purple_urchin_conceiledm2),
+                                            purple_urchin_densitym2, purple_urchin_conceiledm2), # 1 instance
          red_urchin_conceiledm2 = ifelse(red_urchin_conceiledm2 > red_urchin_densitym2,
-                                            red_urchin_densitym2, red_urchin_conceiledm2)) %>%
+                                            red_urchin_densitym2, red_urchin_conceiledm2)) %>% # 2 instances
+  
   #clean up
   rename_with(~ str_replace(., "^upc_", "cov_")) %>%
-  rename(site_name = site,
-         date_surveyed = survey_date)%>%
+  ##############################################################################
+  # Apply standard site naming
+  ##############################################################################
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    }))%>%
+  #rename(date_surveyed = survey_date)%>%
   #get the latest survey date for each site, site_type, zone, and transect by
   #joining metadata
   #check what didn't work
-  #anti_join(reco_meta, by = c("site_name", "site_type", "zone", "date_surveyed"))
   #fix dates
-  semi_join(reco_meta, by = c("site_name", "site_type", "zone", "date_surveyed"))
+  ##############################################################################
+  #join with site table
+  ##############################################################################
+  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))
       #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
       #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
   
