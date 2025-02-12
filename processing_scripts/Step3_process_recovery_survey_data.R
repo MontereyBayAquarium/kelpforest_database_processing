@@ -5,7 +5,13 @@
 # data processing script written by JG.Smith jossmith@mbayaq.org
 
 
+################################################################################
+#progress
 
+#step 1 - complete 
+#step 2 - complete
+#step 3 - drafted, needs QC
+#step 4 - drafted, needs QC
 
 ################################################################################
 #steps still required
@@ -13,7 +19,6 @@
 #1. Need to account for subsample kelp on line 179
 #2. Check survey date as part of final join
 #2. Check final join to identify data inconsistencies
-
 
 
 #When urchins conceiled > total counts, set # conceiled as total counts. 3 total cases. 
@@ -200,7 +205,27 @@ urch_build <- urchin_raw %>%
                                date_surveyed),
          site_type = if_else(site_name == "REC12" & zone == 'Shallow', "BAR",site_type)
          ) %>%
-  semi_join(reco_meta, by = c("site_name", "site_type", "zone", "date_surveyed"))
+  ##############################################################################
+  # Apply standard site naming
+  ##############################################################################
+  rename(site = site_name,
+         survey_date = date_surveyed)%>%
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    }))%>%
+  ##############################################################################
+  #join with site table
+  ##############################################################################
+  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))
 
 #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
 #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
@@ -232,17 +257,18 @@ kelp_build <- kelp_raw %>%
   #convert feet to meters
   mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
   select(-depth_units, -depth, -x16)
-
-#calculate macro density
-macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
-  #macro is not subsampled
-  select(-subsample_meter, -count) %>%
-  group_by(survey_date, site, site_type, zone, 
-           transect)%>%
-  summarize(n_macro_plants_20m2 = n(),
-            macro_stipe_density_20m2 = mean(stipe_counts_macrocystis_only, na.rm =TRUE),
-            macro_stipe_sd_20m2 = sd(stipe_counts_macrocystis_only, na.rm =TRUE),
-            ) 
+  ##############################################################################
+  #calculate macro density
+  ##############################################################################
+  macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
+    #macro is not subsampled
+    select(-subsample_meter, -count) %>%
+    group_by(survey_date, site, site_type, zone, 
+             transect)%>%
+    summarize(n_macro_plants_20m2 = n(),
+              macro_stipe_density_20m2 = mean(stipe_counts_macrocystis_only, na.rm =TRUE),
+              macro_stipe_sd_20m2 = sd(stipe_counts_macrocystis_only, na.rm =TRUE),
+              ) 
   #add true zeros
 
 

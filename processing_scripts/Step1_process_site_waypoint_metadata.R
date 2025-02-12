@@ -137,7 +137,9 @@ reco_build1 <- recovery_orig %>%
            zone = transect, latitude = actual_latitude, longitude = actual_longitude,
            official_survey_date, original_survey_date, resite_date, resite_conducted,
            notes
-         )
+         ) %>%
+  #set data types
+  mutate(site = as.factor(site))
        
 
 ################################################################################

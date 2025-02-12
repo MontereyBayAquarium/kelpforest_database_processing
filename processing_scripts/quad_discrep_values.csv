@@ -1,0 +1,241 @@
+site,site_type,zone,survey_date,transect,quadrat,purple_urchins_raw_diff,purple_quadrants_sampled_raw_diff,purple_conceiled_raw_diff,purple_disease_raw_diff,red_urchins_raw_diff,red_quadrants_sampled_raw_diff,red_conceiled_raw_diff,red_disease_raw_diff,lamr_raw_diff,macr_raw_diff,macj_raw_diff,nerj_raw_diff,ptej_raw_diff,lsetj_raw_diff,eisj_raw_diff,tegula_raw_diff,tegula_quadrants_sampled_raw_diff,pomaulax_raw_diff,pomaulax_quadrants_sampled_raw_diff,relief_raw_diff,risk_raw_diff,drift_superlayer_raw_diff,upc1_raw_diff,upc2_raw_diff,upc3_raw_diff,upc4_raw_diff,upc5_raw_diff,upc6_raw_diff,upc7_raw_diff,upc8_raw_diff,substrate_raw_diff
+REC_01,BAR,Shallow,2024-08-19,3,13,NA,NA,NA,NA,10  ≠  16,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,BAR,Shallow,2024-08-19,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare rock  ≠  Colonial tunicate,Colonial tunicate  ≠  Bare rock,NA
+REC_01,BAR,Shallow,2024-08-19,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,Stephanocystis  ≠  Encrusting red,Articulated coralline  ≠  Stephanocystis,NA
+REC_01,BAR,Shallow,2024-08-19,1,28,9  ≠  14,NA,NA,NA,1  ≠  4,NA,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,13  ≠  7,24  ≠  7,NA,NA,Articulated coralline  ≠  Crustose coralline,NA,NA,NA,NA,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Bare rock,NA
+REC_01,BAR,Deep,2024-08-19,4,22,10  ≠  18,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,INCIP,Shallow,2024-08-07,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Fleshy red  ≠  Crustose coralline,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,NA
+REC_02,INCIP,Shallow,2024-08-07,1,28,0  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,INCIP,Shallow,2024-08-07,2,13,4  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,INCIP,Shallow,2024-08-07,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Stephanocystis,Stephanocystis  ≠  Bare sand,NA,NA,NA
+REC_02,INCIP,Deep,2024-08-07,1,24,NA,NA,0  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,BAR,Shallow,2024-08-05,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Fleshy red,Articulated coralline  ≠  Crustose coralline,Dodecaceria spp.  ≠  Crustose coralline,Hydroids  ≠  Articulated coralline,NA
+REC_02,BAR,Shallow,2024-08-05,1,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Fleshy red  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Dodecaceria spp.,Articulated coralline  ≠  Hydroids,NA
+REC_02,BAR,Shallow,2024-08-05,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Stephanocystis,Encrusting red  ≠  Desmarestia spp.,Dodecaceria spp.  ≠  Desmarestia spp.,NA,NA,NA,Colonial tunicate  ≠  Dodecaceria spp.,NA
+REC_02,BAR,Shallow,2024-08-05,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Stephanocystis  ≠  Encrusting red,Desmarestia spp.  ≠  Encrusting red,Desmarestia spp.  ≠  Dodecaceria spp.,NA,NA,NA,Dodecaceria spp.  ≠  Colonial tunicate,NA
+REC_02,BAR,Shallow,2024-08-05,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,NA,NA
+REC_02,FOR,Shallow,2024-08-05,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Fleshy red,NA,Lam. Holdfast - Live  ≠  Red turf - < 2 cm,Sponge  ≠  Lam. Holdfast - Live,Bare rock  ≠  Sponge,NA,Fleshy red  ≠  Bare rock,NA
+REC_02,FOR,Shallow,2024-08-05,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,FOR,Shallow,2024-08-05,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  Encrusting red,Encrusting red  ≠  Barnacle,NA
+REC_01,INCIP,Deep,2024-08-26,1,24,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Deep,2024-08-26,1,24,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Deep,2024-08-26,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Sponge,NA
+REC_01,INCIP,Deep,2024-08-26,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Sponge,NA
+REC_01,INCIP,Deep,2024-08-26,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Sponge  ≠  Encrusting red,NA
+REC_01,INCIP,Deep,2024-08-26,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Sponge  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,NA
+REC_01,INCIP,Deep,2024-08-26,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Sponge,NA
+REC_01,INCIP,Shallow,2024-08-26,2,11,20  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-08-26,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Articulated coralline  ≠  Fleshy red,Articulated coralline  ≠  Encrusting red,NA,NA,Encrusting red  ≠  Tubeworm - Other Solitary,NA
+REC_01,INCIP,Shallow,2024-08-26,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Articulated coralline,Encrusting red  ≠  Articulated coralline,NA,NA,Tubeworm - Other Solitary  ≠  Encrusting red,NA
+REC_01,INCIP,Shallow,2024-08-26,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,55  ≠  5,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,NA,NA,NA
+REC_01,INCIP,Shallow,2024-08-26,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,NA,NA,NA
+REC_01,INCIP,Shallow,2024-08-26,2,9,NA,NA,NA,NA,NA,4  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-08-26,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Articulated coralline  ≠  Encrusting red,NA,NA
+REC_02,FOR,Deep,2024-08-05,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,10  ≠  16,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_02,FOR,Deep,2024-08-05,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Dodecaceria spp.,NA
+REC_02,FOR,Deep,2024-08-05,3,9,NA,NA,NA,NA,NA,2  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,12  ≠  2,3  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_03,BAR,Shallow,2024-06-25,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lam. Holdfast - Live  ≠  Mac. holdfast - Live,Mac. holdfast - Live  ≠  Lam. Holdfast - Live,NA
+REC_03,BAR,Shallow,2024-06-25,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Lam. Holdfast - Live,NA
+REC_03,BAR,Shallow,2024-06-25,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,1  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  30,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,2,7,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,7  ≠  4,NA,NA,NA,NA,NA,NA,Other anemone  ≠  Cup Corals,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,1  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,1  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Shallow,2024-06-25,3,9,NA,4  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,4  ≠  20,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,NA
+REC_03,BAR,Shallow,2024-06-25,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,6  ≠  30,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Encrusting red,NA,NA,NA
+REC_03,BAR,Deep,2024-06-25,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Deep,2024-06-25,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,BAR,Deep,2024-06-25,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Mac. holdfast - Live  ≠  Lam. Holdfast - Live,NA,NA,NA
+REC_03,BAR,Deep,2024-06-25,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,4,28,1  ≠  6,NA,NA,NA,1  ≠  0,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,4,26,11  ≠  15,NA,11  ≠  15,NA,0  ≠  3,NA,0  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,3,13,10  ≠  4,NA,10  ≠  4,NA,0  ≠  1,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,3,11,4  ≠  6,NA,4  ≠  2,NA,0  ≠  1,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,1,28,6  ≠  1,NA,NA,NA,0  ≠  1,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,1,26,15  ≠  11,NA,15  ≠  11,NA,4  ≠  0,NA,4  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,2,13,4  ≠  10,NA,4  ≠  10,NA,1  ≠  0,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Encrusting red,Articulated coralline  ≠  Encrusting red,NA
+REC_03,FOR,Deep,2024-07-02,2,11,6  ≠  4,NA,2  ≠  4,NA,1  ≠  0,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,14  ≠  72,12  ≠  60,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,14  ≠  70,8  ≠  40,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,Encrusting red  ≠  Articulated coralline,NA
+REC_03,FOR,Deep,2024-07-02,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,NA,NA
+REC_03,FOR,Deep,2024-07-02,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,2  ≠  10,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  30,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Deep,2024-07-02,3,9,NA,4  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  30,0  ≠  40,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  6,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  Yes,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  Yes,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,3  ≠  4,NA,NA,NA,NA,0  ≠  Yes,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  Yes,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,1,26,NA,4  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,5  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,5  ≠  0,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,FOR,Shallow,2024-06-25,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,25  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Shallow,2024-07-02,2,9,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Shallow,2024-07-02,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,NA,NA
+REC_03,INCIP,Shallow,2024-07-02,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Encrusting red,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Shallow,2024-07-02,3,7,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Shallow,2024-07-02,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Encrusting red,Red turf - < 2 cm  ≠  Encrusting red,NA,NA
+REC_03,INCIP,Deep,2024-07-02,1,24,NA,NA,NA,NA,NA,4  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Deep,2024-07-02,1,22,23  ≠  21,NA,1  ≠  0,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,9  ≠  11,NA,0  ≠  1,NA,NA,5  ≠  4,NA,Fleshy red  ≠  Crustose coralline,NA,NA,NA,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,Articulated coralline  ≠  Encrusting red,NA
+REC_03,INCIP,Deep,2024-07-02,2,9,NA,4  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Deep,2024-07-02,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Deep,2024-07-02,4,22,NA,NA,NA,NA,NA,4  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  30,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,NA
+REC_03,INCIP,Deep,2024-07-02,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,6  ≠  30,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Deep,2024-07-02,3,13,43  ≠  46,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_03,INCIP,Deep,2024-07-02,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Encrusting red,Red turf - < 2 cm  ≠  Encrusting red,NA,NA,NA
+REC_04,FOR,Shallow,2024-07-30,4,28,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,FOR,Shallow,2024-07-30,4,26,NA,NA,NA,NA,NA,NA,NA,NA,8  ≠  0,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,FOR,Shallow,2024-07-30,1,26,NA,NA,0  ≠  1,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,11  ≠  2,NA,NA,NA,11  ≠  6,0  ≠  3,NA,Fleshy red  ≠  Crustose coralline,NA,NA,NA,Encrusting red  ≠  Phragmatopoma,Fleshy red  ≠  Phragmatopoma,Lam. Holdfast - Live  ≠  Phragmatopoma,Fleshy red  ≠  Phragmatopoma,NA
+REC_04,FOR,Shallow,2024-07-30,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Phragmatopoma  ≠  Crustose coralline,Phragmatopoma  ≠  Crustose coralline,Phragmatopoma  ≠  Crustose coralline,Phragmatopoma  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,NA
+REC_04,FOR,Shallow,2024-07-30,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,10  ≠  3,5  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,FOR,Shallow,2024-07-30,3,9,NA,NA,NA,NA,9  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,8  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,Stephanocystis  ≠  Other anemone,NA
+REC_04,FOR,Shallow,2024-07-30,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lam. Holdfast - Live  ≠  Stephanocystis,Phragmatopoma  ≠  Lam. Holdfast - Live,NA,NA,Stephanocystis  ≠  Phragmatopoma,NA
+REC_04,BAR,Deep,2024-09-04,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,7  ≠  2,NA,13  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-09-04,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Encrusting red  ≠  Articulated coralline,Other anemone  ≠  Articulated coralline,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Other anemone,NA
+REC_04,FOR,Deep,2024-07-29,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,NA,NA,NA,NA
+REC_04,FOR,Deep,2024-07-29,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Dodecaceria spp.  ≠  Phragmatopoma,Phragmatopoma  ≠  Dodecaceria spp.,NA
+REC_04,FOR,Deep,2024-07-29,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_04,FOR,Deep,2024-07-29,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Dictyota/Dictyopteris  ≠  Dictyoneurum spp.,NA,NA,NA,NA,NA,NA
+REC_04,FOR,Deep,2024-07-29,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,NA,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,NA,NA,NA,NA
+REC_04,INCIP,Shallow,2024-07-29,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lam. Holdfast - Live  ≠  Stephanocystis,Bare sand  ≠  Lam. Holdfast - Live,NA,Stephanocystis  ≠  Bare sand,NA
+REC_04,INCIP,Shallow,2024-07-29,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,12  ≠  17,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Shallow,2024-07-29,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Red turf - < 2 cm,Phragmatopoma  ≠  Red turf - < 2 cm,Phragmatopoma  ≠  Desmarestia spp.,NA,Red turf - < 2 cm  ≠  Phragmatopoma,Red turf - < 2 cm  ≠  Phragmatopoma,NA
+REC_04,INCIP,Shallow,2024-07-29,1,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Articulated coralline,Bare sand  ≠  Articulated coralline,Bare sand  ≠  Red turf - < 2 cm,NA,Articulated coralline  ≠  Bare sand,Articulated coralline  ≠  Bare sand,NA
+REC_04,INCIP,Deep,2024-07-22,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,1  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,1  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,5  ≠  25,7  ≠  35,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,3  ≠  15,5  ≠  25,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,2  ≠  10,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,1  ≠  5,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Encrusting red,Bare sand  ≠  Encrusting red,NA,NA
+REC_04,INCIP,Deep,2024-07-22,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,5  ≠  25,2  ≠  10,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Bare sand,Encrusting red  ≠  Bare sand,NA,NA
+REC_04,INCIP,Deep,2024-07-22,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Phragmatopoma,NA
+REC_04,INCIP,Deep,2024-07-22,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,16  ≠  6,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Phragmatopoma  ≠  Red turf - < 2 cm,NA,NA,Red turf - < 2 cm  ≠  Phragmatopoma,NA
+REC_04,INCIP,Deep,2024-07-22,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Crustose coralline,NA,NA,NA,Phragmatopoma  ≠  Encrusting red,Bare rock  ≠  Phragmatopoma,NA
+REC_04,INCIP,Deep,2024-07-22,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Stephanocystis  ≠  Red turf - < 2 cm,Stephanocystis  ≠  Red turf - < 2 cm,Stephanocystis  ≠  Red turf - < 2 cm,NA,NA,NA,NA
+REC_04,INCIP,Deep,2024-07-22,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Phragmatopoma  ≠  Fleshy red,NA,Fleshy red  ≠  Phragmatopoma,NA
+REC_04,BAR,Shallow,2024-07-29,4,24,26  ≠  28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Shallow,2024-07-29,3,9,NA,NA,NA,NA,4  ≠  9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  6,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,4,24,NA,4  ≠  2,2  ≠  1,NA,NA,4  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  30,4  ≠  20,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,4,22,NA,NA,NA,NA,NA,4  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  10,NA,NA,NA,6  ≠  30,3  ≠  15,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,3,9,NA,4  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  20,2  ≠  10,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_04,BAR,Deep,2024-07-22,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,3  ≠  15,2  ≠  10,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,BAR,Shallow,2024-07-30,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,29  ≠  13,0  ≠  19,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,BAR,Shallow,2024-07-30,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Phragmatopoma  ≠  Dodecaceria spp.,NA
+REC_05,BAR,Deep,2024-07-30,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,NA,NA,Articulated coralline  ≠  Encrusting red,NA
+REC_05,INCIP,Shallow,2024-07-31,1,28,NA,NA,4  ≠  11,11  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,NA,NA,NA
+REC_05,INCIP,Shallow,2024-07-31,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lam. Holdfast - Live  ≠  Desmarestia spp.,NA,NA,Desmarestia spp.  ≠  Lam. Holdfast - Live,NA
+REC_05,INCIP,Shallow,2024-07-31,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Shallow,2024-07-31,3,13,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,NA,Crustose coralline  ≠  Articulated coralline,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Shallow,2024-07-31,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Lam. Holdfast - Live  ≠  Desmarestia spp.,Desmarestia spp.  ≠  Lam. Holdfast - Live,NA,NA
+REC_05,INCIP,Shallow,2024-07-31,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Red turf - < 2 cm,Crustose coralline  ≠  Stephanocystis,Crustose coralline  ≠  Stephanocystis,Crustose coralline  ≠  Desmarestia spp.,NA,Desmarestia spp.  ≠  Lam. Holdfast - Live,NA
+REC_05,INCIP,Shallow,2024-07-31,2,9,NA,NA,NA,0  ≠  4,2  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare rock  ≠  Desmarestia spp.,Bare rock  ≠  Desmarestia spp.,NA
+REC_05,INCIP,Shallow,2024-07-31,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Encrusting red,Encrusting red  ≠  Red turf - < 2 cm,NA
+REC_05,INCIP,Shallow,2024-07-31,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,7  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Deep,2024-08-27,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Deep,2024-08-27,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Deep,2024-08-27,1,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,3  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,INCIP,Deep,2024-08-27,4,26,NA,NA,2  ≠  12,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,FOR,Shallow,2024-07-31,1,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Cup Corals,NA
+REC_05,FOR,Shallow,2024-07-31,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Red turf - < 2 cm,Encrusting red  ≠  Red turf - < 2 cm,NA
+REC_05,FOR,Shallow,2024-07-31,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_05,FOR,Deep,2024-07-31,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Dead Kelp Holdfast (any)  ≠  Stephanocystis,NA
+REC_07,INCIP,Shallow,2024-08-27,4,26,NA,NA,NA,4  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Shallow,2024-08-27,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Shallow,2024-08-27,4,22,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Deep,2024-08-27,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Deep,2024-08-27,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Deep,2024-08-27,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Sponge,NA
+REC_07,INCIP,Deep,2024-08-27,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_07,INCIP,Deep,2024-08-27,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,8  ≠  0,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Articulated coralline  ≠  Crustose coralline,NA,NA,NA
+REC_01,INCIP,Shallow,2024-09-09,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,23  ≠  11,NA,NA,NA,4  ≠  2,0  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-09-09,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Encrusting red,Encrusting red  ≠  Red turf - < 2 cm,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-09-09,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Hydroids  ≠  Other anemone,NA
+REC_01,INCIP,Shallow,2024-09-09,1,26,NA,NA,NA,1  ≠  7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,9  ≠  29,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-09-09,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,INCIP,Shallow,2024-09-09,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Red turf - < 2 cm  ≠  Encrusting red,Red turf - < 2 cm  ≠  Encrusting red,Red turf - < 2 cm  ≠  Encrusting red,NA
+REC_01,FOR,Deep,2024-09-09,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  8,1  ≠  6,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,FOR,Deep,2024-09-09,1,22,NA,NA,2  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,FOR,Deep,2024-09-09,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,8  ≠  0,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,FOR,Shallow,2024-09-09,3,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_01,FOR,Shallow,2024-09-09,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,NA,Fleshy red  ≠  Crustose coralline,NA,NA,NA,Articulated coralline  ≠  Encrusting red,Encrusting red  ≠  Other anemone,NA
+REC_01,FOR,Shallow,2024-09-09,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Fleshy red,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Shallow,2024-08-13,1,24,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Shallow,2024-08-13,2,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Green algae  ≠  Articulated coralline,NA,NA,NA,Shell Debris  ≠  Green algae,Boulder (10 cm - 1 m)  ≠  Bedrock (> 1 m)
+REC_10,INCIP,Shallow,2024-08-13,4,26,16  ≠  24,NA,2  ≠  5,0  ≠  2,1  ≠  3,NA,1  ≠  2,0  ≠  2,NA,NA,NA,NA,NA,NA,NA,23  ≠  16,NA,2  ≠  0,NA,5  ≠  10,9  ≠  11,NA,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,NA,NA,Encrusting red  ≠  Articulated coralline,Barnacle  ≠  Encrusting red,Sponge  ≠  Encrusting red,NA,NA
+REC_10,INCIP,Shallow,2024-08-13,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Sponge,Sponge  ≠  Bare sand,NA
+REC_10,INCIP,Shallow,2024-08-13,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,57  ≠  731,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Shallow,2024-08-13,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Shallow,2024-08-13,4,26,19  ≠  24,NA,0  ≠  5,0  ≠  2,1  ≠  3,NA,0  ≠  2,0  ≠  2,NA,NA,NA,NA,NA,NA,NA,0  ≠  16,NA,NA,NA,11  ≠  10,3  ≠  11,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Articulated coralline,Crustose coralline  ≠  Encrusting red,Sponge  ≠  Encrusting red,Encrusting red  ≠  Sponge,NA
+REC_10,INCIP,Deep,2024-08-13,4,28,36  ≠  29,3  ≠  4,3  ≠  0,NA,7  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,13  ≠  11,16  ≠  3,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,Articulated coralline  ≠  Encrusting red,NA,NA
+REC_10,INCIP,Deep,2024-08-13,3,13,NA,NA,3  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Deep,2024-08-13,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bryozoan  ≠  Sponge,NA
+REC_10,INCIP,Deep,2024-08-13,1,28,NA,4  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,INCIP,Deep,2024-08-13,4,24,NA,NA,NA,NA,6  ≠  21,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,BAR,Shallow,2024-08-13,4,26,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_10,BAR,Shallow,2024-08-13,1,22,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,2  ≠  11,11  ≠  0,NA,NA,Corynactis californica  ≠  Crustose coralline,Sponge  ≠  Corynactis californica,NA,NA,Bare rock  ≠  Sponge,Crustose coralline  ≠  Bare rock,NA
+REC_10,BAR,Shallow,2024-08-13,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Sponge  ≠  Crustose coralline,NA,Crustose coralline  ≠  Sponge,NA
+REC_10,BAR,Shallow,2024-08-13,3,7,NA,NA,NA,NA,NA,2  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-06-17,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Fleshy red,Sponge  ≠  Articulated coralline,NA,Fleshy red  ≠  Sponge,NA
+REC_10,FOR,Shallow,2024-06-17,2,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-06-17,2,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-06-17,1,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-06-17,1,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,2  ≠  11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,BAR,Shallow,2024-06-18,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,NA,NA,NA,NA
+REC_11,BAR,Shallow,2024-06-18,1,22,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_11,BAR,Shallow,2024-06-18,1,24,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,BAR,Shallow,2024-06-18,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Boulder (10 cm - 1 m)  ≠  Bedrock (> 1 m)
+REC_11,BAR,Shallow,2024-06-18,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,9  ≠  33,33  ≠  9,NA,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,Encrusting red  ≠  Crustose coralline,NA,Dodecaceria spp.  ≠  Bare sand,Barnacle  ≠  Bare sand,NA
+REC_11,BAR,Shallow,2024-06-18,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,10  ≠  1,1  ≠  10,NA,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Fleshy red,Crustose coralline  ≠  Encrusting red,Crustose coralline  ≠  Encrusting red,NA,Bare sand  ≠  Dodecaceria spp.,Bare sand  ≠  Barnacle,NA
+REC_11,BAR,Shallow,2024-06-18,3,9,8  ≠  21,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,9  ≠  4,NA,NA,NA,14  ≠  29,35  ≠  16,NA,NA,NA,Encrusting red  ≠  Crustose coralline,NA,NA,NA,NA,Bare sand  ≠  Encrusting red,NA
+REC_11,BAR,Shallow,2024-06-18,3,7,21  ≠  8,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,4  ≠  9,NA,NA,NA,16  ≠  35,29  ≠  14,NA,NA,NA,Crustose coralline  ≠  Encrusting red,NA,NA,NA,NA,Encrusting red  ≠  Bare sand,NA
+REC_11,BAR,Deep,2024-06-18,1,11,NA,NA,NA,NA,3  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,BAR,Deep,2024-06-18,1,9,6  ≠  14,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,34  ≠  36,NA,2  ≠  3,NA,10  ≠  3,3  ≠  0,NA,NA,NA,NA,Articulated coralline  ≠  Encrusting red,Articulated coralline  ≠  Encrusting red,NA,NA,Encrusting red  ≠  Bare sand,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_11,FOR,Shallow,2024-08-06,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,FOR,Shallow,2024-08-06,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Other anemone  ≠  Cup Corals,NA,NA
+REC_11,FOR,Shallow,2024-08-06,1,26,NA,NA,NA,NA,NA,NA,NA,NA,11  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,FOR,Shallow,2024-08-06,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,Fleshy red  ≠  Crustose coralline,NA,NA,NA,NA,NA,NA
+REC_11,FOR,Deep,2024-08-06,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,59  ≠  57,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_11,FOR,Deep,2024-08-06,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Sponge  ≠  Hydroids,NA,Bare sand  ≠  Sponge,NA
+REC_11,FOR,Deep,2024-08-06,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare rock  ≠  Bare sand,Bare rock  ≠  Bare sand,NA,NA
+REC_12,BAR,Shallow,2024-08-12,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,1  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_12,BAR,Shallow,2024-08-12,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare rock  ≠  Barnacle,NA
+REC_12,BAR,Shallow,2024-08-12,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Articulated coralline,Articulated coralline  ≠  Encrusting red,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,2,13,NA,NA,NA,NA,NA,NA,NA,NA,NA,8  ≠  0,0  ≠  8,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,4,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,11  ≠  2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,3,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Encrusting red  ≠  Articulated coralline,Encrusting red  ≠  Articulated coralline,Encrusting red  ≠  Articulated coralline,Cup Corals  ≠  Corynactis californica,Cup Corals  ≠  Corynactis californica,NA
+REC_10,FOR,Deep,2024-09-16,1,24,5  ≠  6,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,1,22,NA,NA,NA,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,3  ≠  0,0  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,4,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,3  ≠  13,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Deep,2024-09-16,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,6  ≠  2,NA,NA,NA,6  ≠  3,5  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,Boulder (10 cm - 1 m)  ≠  Bedrock (> 1 m)
+REC_10,FOR,Deep,2024-09-16,3,7,NA,NA,NA,0  ≠  4,NA,NA,NA,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-09-16,3,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bedrock (> 1 m)  ≠  Boulder (10 cm - 1 m)
+REC_10,FOR,Shallow,2024-09-16,2,7,NA,NA,NA,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_10,FOR,Shallow,2024-09-16,1,28,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare rock  ≠  Dictyoneurum spp.,NA,NA,Dictyoneurum spp.  ≠  Bare rock,NA,NA,NA
+REC_10,FOR,Shallow,2024-09-16,2,11,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Barnacle,Barnacle  ≠  Bare sand,NA
+REC_10,BAR,Deep,2024-09-16,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  9,NA,9  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Shallow,2024-09-03,1,28,NA,NA,2  ≠  20,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Shallow,2024-09-03,1,24,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  4,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Shallow,2024-09-03,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bryozoan  ≠  Barnacle,NA
+REC_13,FOR,Shallow,2024-09-03,2,7,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  Solitary tunicate,NA,Sponge  ≠  Barnacle,Barnacle  ≠  Sponge,NA,NA
+REC_13,FOR,Shallow,2024-09-03,4,24,NA,NA,10  ≠  12,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Shallow,2024-09-03,4,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Mac. holdfast - Live  ≠  Red turf - < 2 cm,NA,Red turf - < 2 cm  ≠  Mac. holdfast - Live,NA
+REC_13,FOR,Deep,2024-09-03,1,26,NA,NA,NA,NA,8  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Deep,2024-09-03,1,22,NA,NA,NA,NA,NA,NA,NA,NA,NA,0  ≠  1,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_13,FOR,Deep,2024-09-03,2,9,NA,NA,4  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Sponge  ≠  Cup Corals,Cup Corals  ≠  Sponge,NA
+REC_13,FOR,Deep,2024-09-03,3,9,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Shell Debris  ≠  Crustose coralline,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,1,28,10  ≠  12,NA,4  ≠  0,NA,3  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,1,26,5  ≠  1,NA,2  ≠  0,NA,5  ≠  0,NA,5  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,1,24,7  ≠  18,NA,NA,NA,3  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,1,22,2  ≠  1,NA,NA,NA,1  ≠  0,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,2,13,12  ≠  10,NA,0  ≠  4,NA,1  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,2,11,1  ≠  5,NA,0  ≠  2,NA,0  ≠  5,NA,0  ≠  5,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,2,9,18  ≠  7,NA,NA,NA,0  ≠  3,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+REC_14,INCIP,Deep,2024-10-02,2,7,1  ≠  2,NA,NA,NA,0  ≠  1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
