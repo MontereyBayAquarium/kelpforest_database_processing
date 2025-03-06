@@ -19,6 +19,7 @@
 #1. Need to account for subsample kelp on line 179
 #2. Check survey date as part of final join
 #2. Check final join to identify data inconsistencies
+#. NEED TO RENAME SITES FOR EVEN BLOCKS -- SEE LINES 190-199
 
 
 #When urchins conceiled > total counts, set # conceiled as total counts. 3 total cases. 
@@ -33,15 +34,15 @@ gs4_auth()
 #set dir
 datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
 
-#read data
-quad_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
+#read reconciled data
+quad_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=0#gid=0",
                        sheet = 1) %>% clean_names()
 
-urchin_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
+urchin_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=172495760#gid=172495760",
                          sheet = 2) %>% clean_names()
 
 
-kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
+kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
                        sheet = 3) %>% clean_names()
 
 #site metdata
@@ -63,8 +64,6 @@ reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>
 View(quad_raw)
 
 quad_build <- quad_raw %>%
-  # Remove example first row and classifiers
-  slice(-1) %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   # Set quadrat to numeric by removing R/L
   mutate(quadrat = str_remove(quadrat, "[RL]$")) %>%
@@ -82,6 +81,14 @@ quad_build <- quad_raw %>%
   ##############################################################################
   # Extrapolate densities for subsamples
   ##############################################################################
+  #first change NA to 0 --- these are true zeroes
+  mutate(across(c(purple_urchins, purple_conceiled, red_urchins, red_conceiled, tegula, pomaulax),
+                ~ replace_na(.x, 0))) %>%
+  #next change subsampled quadrants to 4 if NA --- these are assumed 4
+  mutate(across(c(purple_quadrants_sampled, red_quadrants_sampled, tegula_quadrants_sampled, 
+                  pomaulax_quadrants_sampled),
+                ~ replace_na(.x, 4))) %>%
+  #now apply scalar
   mutate(
     purple_urchin_densitym2 = purple_urchins * (4 / purple_quadrants_sampled),
     purple_urchin_conceiledm2 = purple_conceiled * (4 / purple_quadrants_sampled),
@@ -99,11 +106,13 @@ quad_build <- quad_raw %>%
   ##############################################################################
   # Step 1: Convert upc1 through upc8 columns to long format
   pivot_longer(cols = starts_with("upc"), names_to = "upc", values_to = "species") %>%
+  # Remove rows where species is NA (ignoring those UPC points)
+  filter(!is.na(species)) %>%
   # Group by quadrat and calculate total UPC points per quadrat
   group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
            transect, quadrat, substrate) %>%
   mutate(total_points = n()) %>%  # Calculate total points per quadrat
-  # Calculate percent cover for each species
+  # Calculate percent cover for each species based on the total points that were quantified
   group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
            transect, quadrat, substrate, species, purple_urchin_densitym2, purple_urchin_conceiledm2,
            red_urchin_densitym2, red_urchin_conceiledm2, tegula_densitym2, pomaulax_densitym2) %>%
@@ -118,14 +127,6 @@ quad_build <- quad_raw %>%
   clean_names() %>%
   #clean up
   mutate(substrate = word(substrate, 1)) %>%
-  ##############################################################################
-  #fix conceiled counts -- conceiled should never be > total counts
-  ##############################################################################
-  mutate(purple_urchin_conceiledm2 = ifelse(purple_urchin_conceiledm2 > purple_urchin_densitym2,
-                                            purple_urchin_densitym2, purple_urchin_conceiledm2), # 1 instance
-         red_urchin_conceiledm2 = ifelse(red_urchin_conceiledm2 > red_urchin_densitym2,
-                                            red_urchin_densitym2, red_urchin_conceiledm2)) %>% # 2 instances
-  
   #clean up
   rename_with(~ str_replace(., "^upc_", "cov_")) %>%
   ##############################################################################
@@ -157,12 +158,47 @@ quad_build <- quad_raw %>%
   
 # Result: `quad_build` now contains only records with the latest survey dates
 
-
 #checking
-#check if any instances where purple conceiled exceeds total counts
-quad_build %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) #one case, fixed above
-#check if any instances where purple conceiled exceeds total counts
-quad_build %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) #two cases, fixed above
+#check if any instances where conceiled exceeds total counts
+quad_build %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
+quad_build %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
+
+#check for any duplicate sites
+date_counts <- quad_build %>%
+  group_by(site, site_type, zone) %>%
+  summarise(num_dates = n_distinct(survey_date), .groups = "drop")
+
+ggplot(date_counts, aes(x = num_dates, y = site, fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~zone) +
+  labs(
+    x = "Number of Unique Survey Dates",
+    y = "Site",
+    title = "Unique Survey Dates per Site, Site Type, and Zone",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
+#check transects
+
+transect_counts <- quad_build %>%
+  group_by(site, site_type, zone) %>%
+  summarise(num_transects = n_distinct(transect), .groups = "drop")
+
+
+ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~zone) +
+  labs(
+    x = "Number of Unique Transects",
+    y = "Site",
+    title = "Number of Transects per Site, Site Type, and Zone",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
 
 
 
