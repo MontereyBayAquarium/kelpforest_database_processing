@@ -400,14 +400,15 @@ kelp_build1 <- macro_build1 %>%
 ################################################################################
 #Step 4 - export
 
+write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 6 March 2025
+write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 6 March 2025
+write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 6 March 2025
 
 
-################################################################################
-#Step 5 - export
 
-#write to 2024 intern folder
-output_file_path <- "/Users/jossmith/2024_KFI_projects/output/raw/recovery_data.csv"
-write.csv(quad_build_combined, file = output_file_path, row.names = FALSE)
+
+
+
 
 
 
