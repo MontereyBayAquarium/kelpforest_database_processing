@@ -57,6 +57,9 @@ reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>
                 site_long = as.factor(site_long)
               )
 
+lat_long <- reco_meta %>% select(site, site_type, zone, survey_date, latitude,
+                                 longitude)
+
 ################################################################################
 #Step 1 - process quadrat data
 
@@ -152,9 +155,12 @@ quad_build <- quad_raw %>%
   ##############################################################################
   #join with site table
   ##############################################################################
-  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))
+  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))%>%
       #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
       #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
+  #join lat/long
+  left_join(lat_long) %>% select(-name_of_data_enterer) %>% 
+  select(site, site_type, survey_date,latitude, longitude, everything())
   
 # Result: `quad_build` now contains only records with the latest survey dates
 
@@ -199,7 +205,25 @@ ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
   theme_minimal()
 
 
+#check quadrats
+quadrat_counts <- quad_build %>%
+  group_by(site, site_type, zone, transect) %>%
+  summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
 
+ggplot(quadrat_counts, aes(x = num_quadrats, y = as.factor(transect), fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_grid(zone ~ site, scales = "free_y") +  # Facet by zone and site
+  labs(
+    x = "Number of Unique Quadrats",
+    y = "Transect",
+    title = "Number of Quadrats per Site, Site Type, Zone, and Transect",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
+#check quadrat names
+unique(quad_build$quadrat)
 
 
 ################################################################################
