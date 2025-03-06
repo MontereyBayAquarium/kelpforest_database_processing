@@ -10,19 +10,14 @@
 
 #step 1 - complete 
 #step 2 - complete
-#step 3 - drafted, needs QC
+#step 3 - complete
 #step 4 - drafted, needs QC
 
 ################################################################################
 #steps still required
 
-#1. Need to account for subsample kelp on line 179
-#2. Check survey date as part of final join
-#2. Check final join to identify data inconsistencies
 #. NEED TO RENAME SITES FOR EVEN BLOCKS -- SEE LINES 190-199
 
-
-#When urchins conceiled > total counts, set # conceiled as total counts. 3 total cases. 
 
 ################################################################################
 
@@ -399,23 +394,12 @@ kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
 #join with macro
 kelp_build1 <- macro_build1 %>%
   left_join(kelp_density) %>%
-  mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
+  mutate(across(12:19, ~ replace_na(.x, 0)))
 
 
 ################################################################################
-#Step 4 - join everything
+#Step 4 - export
 
-#inspect for join
-str(quad_build) #base df
-str(urch_size_summary)
-str(macro_density)
-str(kelp_density)
-
-
-quad_build_combined <- quad_build %>%
-  left_join(urch_size_summary, by = c("survey_date", "site", "site_type", "zone", "transect")) %>%
-  left_join(macro_density, by = c("survey_date", "site", "site_type", "zone", "transect")) %>%
-  left_join(kelp_density, by = c("survey_date", "site", "site_type", "zone", "transect"))
 
 
 ################################################################################
