@@ -292,8 +292,6 @@ View(kelp_raw)
 
 #build kelp
 kelp_build <- kelp_raw %>%
-  # Remove example first row and classifiers
-  slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
   # Set column types
   mutate(
@@ -310,11 +308,11 @@ kelp_build <- kelp_raw %>%
   ) %>%
   #convert feet to meters
   mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
-  select(-depth_units, -depth, -x16)
-  ##############################################################################
+  select(-depth_units, -depth, -date)
+##############################################################################
   #calculate macro density
-  ##############################################################################
-  macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
+##############################################################################
+macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
     #macro is not subsampled
     select(-subsample_meter, -count) %>%
     group_by(survey_date, site, site_type, zone, 
@@ -323,50 +321,85 @@ kelp_build <- kelp_raw %>%
               macro_stipe_density_20m2 = mean(stipe_counts_macrocystis_only, na.rm =TRUE),
               macro_stipe_sd_20m2 = sd(stipe_counts_macrocystis_only, na.rm =TRUE),
               ) 
-  #add true zeros
 
-
-
-# Step 1: Find the latest survey date for each site_name, site_type, and zone in reco_meta
-latest_surveys <- reco_meta %>%
-  group_by(site_name, site_type, zone) %>%
-  summarize(latest_date = max(date_surveyed), .groups = 'drop')
-
-# Step 2: Ensure each site_name, site_type, and zone combination has four transects
-# Create a full set of expected combinations (site_name, site_type, zone, transect 1-4)
-expected_combinations <- latest_surveys %>%
+#add true zeros
+macro_build1 <- reco_meta %>%
+  #create list of transects for each site
+  select(site, site_type, zone, latitude, longitude, survey_date)%>%
   mutate(transect = list(1:4)) %>%
-  unnest(transect)
-
-
-# Step 3: Left join `macro_density` with `expected_combinations` to find missing rows
-# Replace NA in `macro_density` columns with zeros where rows are missing
-macro_density_complete <- expected_combinations %>%
-  left_join(macro_density, 
-            by = c("site_name" = "site", "site_type", "zone", "transect", "latest_date" = "survey_date")) %>%
+  unnest(transect) %>%
+  #add macro
+  left_join(macro_density) %>%
   mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
 
 
+##############################################################################
+#calculate density of everyting else
+##############################################################################
 
 
-
+scalar <- kelp_build %>% filter(species != "MACPYR") %>%
+          mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
+                                 subsample_meter,
+                                 ifelse(
+                                   subsample_meter >= 10 & subsample_meter <=20, 
+                                   (subsample_meter-10),
+                                   ifelse(
+                                     subsample_meter >= 20 & subsample_meter <=30, 
+                                     (30-subsample_meter),
+                                    subsample_meter
+                                   )
+                                 )),
+                 linear_meters_sampled = ifelse(is.na(linear_meters_sampled),
+                                                10,
+                                                linear_meters_sampled
+                                                ),
+                 #one meter sampled on each side of transect
+                 area_sampled = linear_meters_sampled*2,
+                 scalar = 20-area_sampled
+                 )
 
 
 kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
   select(-stipe_counts_macrocystis_only) %>%
-  #######ACCOUNT FOR SUMSAMPLE HERE############
-group_by(survey_date, site, site_type, zone, 
-         transect, depth_m, species)%>%
-  summarize(density20m2 = mean(count)) %>%
-  # Rename species to include "density20m2_" prefix
+  #first fix subsample -- note that some observers recorded the transect 
+  #position rather than the meters sampled. If subsample is >10 then it is transect
+  #position, so we need to fix this. 
+  mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
+                                        subsample_meter,
+                                        ifelse(
+                                          subsample_meter >= 10 & subsample_meter <=20, 
+                                          (subsample_meter-10),
+                                          ifelse(
+                                            subsample_meter >= 20 & subsample_meter <=30, 
+                                            (30-subsample_meter),
+                                            subsample_meter
+                                          )
+                                        )),
+         linear_meters_sampled = ifelse(is.na(linear_meters_sampled),
+                                        10,
+                                        linear_meters_sampled
+         ),
+         scalar = 10/linear_meters_sampled,
+         scalar = ifelse(scalar == 0.0, 1, scalar),
+         density_20m2 = count*scalar
+  )%>%
+  select(-linear_meters_sampled, -scalar, -count, -subsample_meter)%>%
   mutate(species = paste0("density20m2_", species)) %>%
   # Pivot wider by species
   pivot_wider(
     names_from = species, 
-    values_from = density20m2,
+    values_from = density_20m2,
     values_fill = 0 #replace NA with true 0
   ) %>% 
-  clean_names()
+  clean_names() %>%
+  select(-name_of_data_enterer, -observer, -buddy)
+
+
+#join with macro
+kelp_build1 <- macro_build1 %>%
+  left_join(kelp_density) %>%
+  mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
 
 
 ################################################################################
