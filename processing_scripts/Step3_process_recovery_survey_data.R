@@ -257,19 +257,10 @@ urch_build <- urchin_raw %>%
   select(name_of_data_enterer, survey_date, everything()) %>%
   mutate(size = as.numeric(as.character(size))) %>%
   rename(size_cm = size) %>% select(-x15) %>%
-  rename(site_name = site,
-         date_surveyed = survey_date)%>%
-  #fix incorrect dates
-  mutate(date_surveyed = if_else(site_name == "REC01" & site_type == "FOR" & zone == "Deep" & date_surveyed == as.Date("2024-08-05"),
-                               as.Date("2024-09-09"),
-                               date_surveyed),
-         site_type = if_else(site_name == "REC12" & zone == 'Shallow', "BAR",site_type)
-         ) %>%
+  select(-date)%>%
   ##############################################################################
   # Apply standard site naming
   ##############################################################################
-  rename(site = site_name,
-         survey_date = date_surveyed)%>%
   mutate(
     # Use a function within str_replace to process each match
     site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
@@ -285,7 +276,10 @@ urch_build <- urchin_raw %>%
   ##############################################################################
   #join with site table
   ##############################################################################
-  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))
+  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date")) %>%
+  left_join(lat_long) %>% select(-name_of_data_enterer) %>% 
+  select(site, site_type, survey_date,latitude, longitude, everything()) %>%
+  select(-observer, -buddy)
 
 #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
 #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
