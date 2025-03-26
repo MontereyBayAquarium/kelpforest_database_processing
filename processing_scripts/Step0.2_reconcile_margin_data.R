@@ -190,88 +190,177 @@ drive_upload(
 ################################################################################
 # process urchin entry
 
-# Process urchin entry
-urch_raw_build1 <- urchin_raw %>%
-  slice(-1) %>%
-  data.frame() %>%
+urch_size_raw_build1 <- urchin_size_raw %>%
+  ########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
-  # Set column types
+  # Apply standard site naming
   mutate(
-    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
-    site = as.character(site),
-    site_type = as.character(site_type),
-    zone = as.character(zone),
-    date = ymd(date),
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
     transect = as.numeric(transect),
-    depth = as.numeric(depth),
-    depth_units = as.character(depth_units),
-    species = as.character(species),
-    size = as.numeric(size),
+    depth_start = as.numeric(depth_start),
+    depth_end = as.numeric(depth_end),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
+    size = as.factor(size),
     count = as.numeric(count)
   ) %>%
-  # Remove unnecessary columns
-  select(-name_of_data_enterer, -observer, -buddy, -x15) %>%
-  # Arrange by all relevant columns
-  arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) %>%
-  # Ensure unique species-size per grouping
-  distinct()
-
-urch_qc_build1 <- urchin_qc %>%
-  slice(-1) %>%
-  data.frame() %>%
-  select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
-  # Set column types
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #make size numeric
   mutate(
-    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
-    site = as.character(site),
-    site_type = as.character(site_type),
-    zone = as.character(zone),
+    size_cm = as.numeric(gsub("cm", "", size))
+  ) %>%
+  select(-size, -name_of_data_enterer,
+         -observer, -buddy)%>%
+  data.frame()
+
+
+urch_size_qc_build1 <- urchin_size_qc %>%
+  slice(-1) %>%
+  select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
+  mutate(
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])
+      numbers <- parts[, 3]
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
     date = ymd(date),
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
     transect = as.numeric(transect),
-    depth = as.numeric(depth),
-    depth_units = as.character(depth_units),
-    species = as.character(species),
-    size = as.numeric(size),
+    depth_start = as.numeric(parse_number(na_if(as.character(depth_start), "NULL"))),
+    depth_end = as.numeric(parse_number(na_if(as.character(depth_end), "NULL"))),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
+    size = as.factor(size),
     count = as.numeric(count)
   ) %>%
-  # Remove unnecessary columns
-  select(-name_of_data_enterer, -observer, -buddy, -x15) %>%
-  # Arrange by all relevant columns
-  arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) %>%
-  # Ensure unique species-size per grouping
-  distinct()
+  mutate(
+    segment = case_when(
+      segment == "0-5M" ~ 5,
+      segment == "5-10M" ~ 10,
+      segment == "10-15M" ~ 15,
+      segment == "15-20M" ~ 20,
+      segment == "20-25M" ~ 25,
+      segment == "25-30M" ~ 30,
+      segment == "30-35M" ~ 35,
+      segment == "35-40M" ~ 40,
+      segment == "40-45M" ~ 45,
+      segment == "45-50M" ~ 50,
+      segment == "50-55M" ~ 55,
+      segment == "55-60M" ~ 60,
+      segment == "60-65M" ~ 65,
+      segment == "65-70M" ~ 70,
+      segment == "70-75M" ~ 75,
+      segment == "75-80M" ~ 80,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  mutate(
+    size_cm = as.numeric(gsub("cm", "", size))
+  ) %>%
+  select(-size, -name_of_data_enterer, -observer, -buddy,
+         -notes) %>%
+  data.frame()
 
 
-# **Step 1: Find missing keys**
-urch_discrep <- anti_join(urch_raw_build1, urch_qc_build1, 
-                          by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units", "species", "size"))
+# Summarize raw data by grouping keys, creating sorted vectors for sizes and counts
+raw_summary <- urch_size_raw_build1 %>%
+  group_by(site, date, heading_out, transect, depth_start, depth_end, depth_units, segment, species) %>%
+  summarise(
+    sizes_raw = list(sort(size_cm)),
+    counts_raw = list(sort(count)),
+    .groups = "drop"
+  )
 
-# **Step 2: Identify discrepancies within matching groups**
-urch_discrep_values <- urch_qc_build1 %>%
-  inner_join(urch_raw_build1, 
-             by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units", "species", "size"), 
-             suffix = c("_raw", "_qc")) %>%
-  
-  # Compare count values
-  mutate(count_diff = if_else(count_raw != count_qc, paste(count_raw, "≠", count_qc), NA_character_)) %>%
-  
-  # Keep only mismatches
-  filter(!is.na(count_diff)) %>%
-  
-  # Select relevant columns for output
-  select(site, site_type, zone, date, transect, depth, depth_units, species, size, count_diff)
+# Summarize QC data by grouping keys in the same way
+qc_summary <- urch_size_qc_build1 %>%
+  group_by(site, date, heading_out, transect, depth_start, depth_end, depth_units, segment, species) %>%
+  summarise(
+    sizes_qc = list(sort(size_cm)),
+    counts_qc = list(sort(count)),
+    .groups = "drop"
+  )
+
+# Join the summaries and compare the sorted vectors
+urch_size_discrep_values <- inner_join(
+  raw_summary, qc_summary, 
+  by = c("site", "date", "heading_out", "transect", "depth_start", 
+         "depth_end", "depth_units", "segment", "species")
+) %>%
+  mutate(
+    sizes_diff = map2_chr(sizes_raw, sizes_qc, ~ 
+                            if (all(.x == .y)) NA_character_ else paste("Raw sizes:", toString(.x), "≠ QC sizes:", toString(.y))),
+    counts_diff = map2_chr(counts_raw, counts_qc, ~ 
+                             if (all(.x == .y)) NA_character_ else paste("Raw counts:", toString(.x), "≠ QC counts:", toString(.y)))
+  ) %>%
+  # Keep only rows where either sizes or counts differ
+  filter(!is.na(sizes_diff) | !is.na(counts_diff))
 
 
 
-#Export
-# Define file path for export
-quad_urchin <- "quad_urchin.csv"
+#write csv
+temp_file <- tempfile(fileext = ".csv")
+write_csv(urch_size_discrep_values, temp_file)
 
-# Write the CSV locally
-write_csv(urch_discrep_values, quad_urchin)
+drive_upload(
+  media = temp_file,
+  path = as_id("1G1JaycgihbplJ2pOED_mXs-895hx4chS"),
+  name = "urch_size_discrep_values.csv",
+  overwrite = TRUE
+)
 
-# Upload to the specified Google Drive folder
-drive_upload(quad_urchin, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+
 
 
 ################################################################################
