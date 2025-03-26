@@ -1,0 +1,65 @@
+site,date,heading_out,transect,depth_start,depth_end,depth_units,segment,substrate_1_raw_diff,substrate_2_raw_diff,substrate_3_raw_diff,substrate_4_raw_diff,substrate_5_raw_diff,relief_1_raw_diff,relief_2_raw_diff,relief_3_raw_diff,relief_4_raw_diff,relief_5_raw_diff,drift_algae_raw_diff,juvenile_laminariales_raw_diff,upc_1_raw_diff,upc_2_raw_diff,upc_3_raw_diff,upc_4_raw_diff,upc_5_raw_diff
+MAR_01,2024-07-08,25,2,15.7,8.2,Meters,25-30M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline
+MAR_03,2024-07-09,50,1,11.8,5,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  BRANCH-flat branching,NA,Articulated coralline  ≠  Crustose coralline,BRANCH-flat branching  ≠  Articulated coralline,NA
+MAR_03,2024-07-09,50,1,11.8,5,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"LEAF- blade, unbranched  ≠  BRANCH-flat branching","Colonial tunicate  ≠  LEAF- blade, unbranched",Sponge  ≠  Colonial tunicate,BRANCH-flat branching  ≠  Sponge
+MAR_03,2024-07-09,50,1,11.8,5,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"LEAF- blade, unbranched  ≠  BRANCH-flat branching",NA,NA,"BRANCH-flat branching  ≠  LEAF- blade, unbranched"
+MAR_11,2024-07-16,270,3,8.4,3.8,Meters,40-45M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,ENCRUSTING RED  ≠  Crustose coralline
+MAR_09,2024-07-17,220,1,17.7,7.5,Meters,25-30M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Macrocystis holdfast (live)  ≠  Desmarestia spp.
+MAR_09,2024-07-17,220,1,17.7,7.5,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Dictyoneurum spp.,NA,NA,Dictyoneurum spp.  ≠  Desmarestia spp.,NA
+MAR_09,2024-07-17,220,1,17.7,7.5,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Dictyoneurum spp.  ≠  Stephanocystis,Dictyoneurum spp.  ≠  Stephanocystis,NA,Desmarestia spp.  ≠  Dictyoneurum spp.
+MAR_09,2024-07-17,220,2,17.1,10.2,Meters,0-5M,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_09,2024-07-17,220,2,17.1,10.2,Meters,5-10M,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_09,2024-07-17,220,2,17.1,10.2,Meters,50-55M,NA,NA,NA,NA,NA,NA,NA,1 m - 2 m  ≠  10cm - 1 m,NA,10cm - 1 m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_09,2024-07-17,220,2,17.1,10.2,Meters,75-80M,NA,NA,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,5-10M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,10-15M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,15-20M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Crustose coralline,NA,NA,NA,Crustose coralline  ≠  Desmarestia spp.
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Laminariales holdfast (live)  ≠  Stephanocystis,Stephanocystis  ≠  Desmarestia spp.,NA,NA,Desmarestia spp.  ≠  Laminariales holdfast (live)
+MAR_09,2024-07-17,220,3,15.7,10.4,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,> 2m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_08,2024-06-10,200,1,8.8,6.7,Meters,45-50M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline
+MAR_08,2024-06-10,200,1,8.8,6.7,Meters,20-25M,NA,NA,NA,NA,NA,NA,NA,NA,NA,10cm - 1 m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_08,2024-06-10,200,2,9.3,6,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Crustose coralline
+MAR_08,2024-06-10,200,2,9.3,6,Meters,40-45M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_02,2024-07-10,60,2,10,7.8,Meters,5-10M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_02,2024-07-10,60,2,10,7.8,Meters,10-15M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_02,2024-07-10,60,2,10,7.8,Meters,15-20M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,NA,NA,NA,NA
+MAR_02,2024-07-10,60,2,10,7.8,Meters,20-25M,NA,NA,NA,NA,NA,NA,NA,1 m - 2 m  ≠  10cm - 1 m,NA,> 2m  ≠  1 m - 2 m,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_02,2024-07-10,60,2,10,7.8,Meters,55-60M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Crustose coralline,Desmarestia spp.  ≠  Crustose coralline,NA,Crustose coralline  ≠  Desmarestia spp.,Crustose coralline  ≠  Desmarestia spp.
+MAR_02,2024-07-10,60,2,10,7.8,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  Bryozoan
+MAR_02,2024-07-10,60,2,10,7.8,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,ENCRUSTING RED  ≠  Bare rock,Articulated coralline  ≠  ENCRUSTING RED,NA,Macrocystis holdfast (live)  ≠  Articulated coralline,Bare rock  ≠  Macrocystis holdfast (live)
+MAR_02,2024-07-10,60,2,10,7.8,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,NA,NA,Articulated coralline  ≠  Crustose coralline,Bare rock  ≠  Articulated coralline
+MAR_02,2024-07-10,60,1,8.6,7.2,Meters,5-10M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_02,2024-07-10,60,1,8.6,7.2,Meters,15-20M,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,NA,NA,Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,Crustose coralline  ≠  ENCRUSTING RED,ENCRUSTING RED  ≠  Crustose coralline,ENCRUSTING RED  ≠  Crustose coralline,NA
+MAR_02,2024-07-10,60,1,8.6,7.2,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Crustose coralline  ≠  LEAF- blade, unbranched",Crustose coralline  ≠  ENCRUSTING RED,NA,ENCRUSTING RED  ≠  Crustose coralline,"LEAF- blade, unbranched  ≠  Crustose coralline"
+MAR_02,2024-07-10,60,1,8.6,7.2,Meters,50-55M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Stephanocystis  ≠  Crustose coralline,NA,NA,NA
+MAR_02,2024-07-10,60,1,8.6,7.2,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Stephanocystis  ≠  Articulated coralline,NA,Solitary tunicate  ≠  Stephanocystis,Articulated coralline  ≠  Solitary tunicate
+MAR_02,2024-07-10,60,3,9.5,5,Meters,15-20M,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),Bedrock (> 1m)  ≠  Boulder (10 cm -1 m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_02,2024-07-10,60,3,9.5,5,Meters,20-25M,NA,NA,NA,NA,NA,10cm - 1 m  ≠  1 m - 2 m,1 m - 2 m  ≠  > 2m,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,NA,NA,Bare rock  ≠  Crustose coralline,NA
+MAR_02,2024-07-10,60,3,9.5,5,Meters,25-30M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  Bare rock,NA,Bare rock  ≠  Crustose coralline,NA,NA
+MAR_02,2024-07-10,60,3,9.5,5,Meters,45-50M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Macrocystis holdfast (live)  ≠  Desmarestia spp.
+MAR_02,2024-07-10,60,3,9.5,5,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  BRANCH-flat branching,NA,NA,NA,BRANCH-flat branching  ≠  Barnacle
+MAR_02,2024-07-10,60,3,9.5,5,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  BRANCH-flat branching,Barnacle  ≠  ENCRUSTING RED,NA,ENCRUSTING RED  ≠  Barnacle,BRANCH-flat branching  ≠  Barnacle
+MAR_02,2024-07-10,60,3,9.5,5,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Macrocystis holdfast (live),NA
+MAR_13,2024-09-18,150,1,12,7.1,Meters,70-75M,NA,NA,NA,NA,NA,NA,1 m - 2 m  ≠  10cm - 1 m,NA,NA,10cm - 1 m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_13,2024-09-18,150,2,12,6.6,Meters,10-15M,NA,NA,NA,NA,NA,NA,NA,NA,> 2m  ≠  1 m - 2 m,> 2m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_13,2024-09-18,150,2,12,6.6,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,> 2m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_13,2024-09-18,150,2,12,6.6,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,> 2m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_13,2024-09-18,150,3,10.4,9.2,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,Articulated coralline  ≠  Crustose coralline
+MAR_13,2024-09-18,150,3,10.4,9.2,Meters,55-60M,NA,NA,NA,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_13,2024-09-18,150,3,10.4,9.2,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Barnacle  ≠  BRANCH-flat branching,Crustose coralline  ≠  BRANCH-flat branching,NA,BRANCH-flat branching  ≠  Crustose coralline,BRANCH-flat branching  ≠  Barnacle
+MAR_13,2024-09-18,150,3,10.4,9.2,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Laminariales holdfast (live)  ≠  Macrocystis holdfast (live),Laminariales holdfast (live)  ≠  Macrocystis holdfast (live)
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,15-20M,NA,Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),Boulder (10 cm -1 m)  ≠  Bedrock (> 1m),NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bare sand  ≠  Bare rock,Bare sand  ≠  Bare rock,Bare sand  ≠  Bare rock,NA,NA
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,55-60M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bryozoan  ≠  Sponge
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,65-70M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,ENCRUSTING RED  ≠  Crustose coralline,Phragmatopoma  ≠  Diopatra ornata,Phragmatopoma  ≠  Diopatra ornata,Phragmatopoma  ≠  Diopatra ornata
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Bryozoan  ≠  Sponge
+MAR_05,2024-09-04,60,3,12.7,10.9,Meters,75-80M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Macrocystis holdfast (live)  ≠  Desmarestia spp.,Macrocystis holdfast (live)  ≠  Desmarestia spp.
+MAR_12,2024-08-28,25,1,12.9,4.8,Meters,45-50M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,ENCRUSTING RED  ≠  Crustose coralline,NA,NA,NA
+MAR_12,2024-08-28,25,1,12.9,4.8,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Dictyoneurum spp.  ≠  Tubeworm - other solitary,NA,NA
+MAR_12,2024-08-28,25,1,12.9,4.8,Meters,10-15M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,LACY-filamentous/dense  ≠  Crustose coralline
+MAR_12,2024-08-28,25,1,12.9,4.8,Meters,25-30M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Crustose coralline  ≠  ENCRUSTING RED,NA,NA,NA,ENCRUSTING RED  ≠  Crustose coralline
+MAR_08,2024-08-14,210,3,28,20,Feet,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,> 2m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,Corynactis californica  ≠  Dictyoneurum spp.,Dictyoneurum spp.  ≠  Corynactis californica
+MAR_08,2024-08-14,210,2,10.8,4.2,Meters,45-50M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Articulated coralline  ≠  Crustose coralline,ENCRUSTING RED  ≠  Articulated coralline,NA
+MAR_08,2024-08-14,210,2,10.8,4.2,Meters,70-75M,NA,NA,NA,NA,NA,NA,NA,10cm - 1 m  ≠  1 m - 2 m,10cm - 1 m  ≠  1 m - 2 m,10cm - 1 m  ≠  1 m - 2 m,NA,NA,NA,NA,NA,NA,NA
+MAR_09,2024-07-01,250,3,16,11,Meters,35-40M,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Desmarestia spp.  ≠  Dictyoneurum spp.
