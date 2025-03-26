@@ -366,110 +366,186 @@ drive_upload(
 ################################################################################
 # process kelp entry
 
-#**************************
-#*Note: Kelp was ultimately sorted directly within the spreadsheet. 
-#*Code below is incomplete.
-#**************************
-
-# Process kelp entry
 kelp_raw_build1 <- kelp_raw %>%
-  slice(-1) %>%
-  data.frame() %>%
+  #########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
-  # Set column types
+  # Apply standard site naming
   mutate(
-    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
-    site = as.character(site),
-    site_type = as.character(site_type),
-    zone = as.character(zone),
-    date = ymd(date),
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
     transect = as.numeric(transect),
-    depth = as.numeric(depth),
-    depth_units = as.character(depth_units),
-    species = as.character(species),
+    depth_start = as.numeric(depth_start),
+    depth_end = as.numeric(depth_end),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
     stipe_counts_macrocystis_only = as.numeric(stipe_counts_macrocystis_only),
     count = as.numeric(count),
     subsample_meter = as.numeric(subsample_meter)
   ) %>%
-  # Remove unnecessary columns
-  select(-name_of_data_enterer, -observer, -buddy, -x16) %>%
-  # Ensure unique species-size per grouping
-  distinct()
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #drop field that are not needed
+  select(-depth_start, -depth_end, -observer, -buddy, -name_of_data_enterer,
+         -heading_out)
 
-# Process kelp entry
+
+
 kelp_qc_build1 <- kelp_qc %>%
-  slice(-1) %>%
-  data.frame() %>%
+  #########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
-  # Set column types
+  # Apply standard site naming
   mutate(
-    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
-    site = as.character(site),
-    site_type = as.character(site_type),
-    zone = as.character(zone),
-    date = ymd(date),
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
     transect = as.numeric(transect),
-    depth = as.numeric(depth),
-    depth_units = as.character(depth_units),
-    species = as.character(species),
+    depth_start = as.numeric(parse_number(na_if(as.character(depth_start), "NULL"))),
+    depth_end = as.numeric(parse_number(na_if(as.character(depth_end), "NULL"))),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    species = as.factor(species),
     stipe_counts_macrocystis_only = as.numeric(stipe_counts_macrocystis_only),
     count = as.numeric(count),
     subsample_meter = as.numeric(subsample_meter)
   ) %>%
-  # Remove unnecessary columns
-  select(-name_of_data_enterer, -observer, -buddy, -x16) %>%
-  # Ensure unique species-size per grouping
-  distinct()
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #drop field that are not needed
+  select(-depth_start, -depth_end, -observer, -buddy, -name_of_data_enterer,
+         -heading_out)
 
 
-#step 2: separate macrocystis and make wider
-kelp_raw_build2_mac <- kelp_raw_build1 %>%
-  filter(species == "MACPYR") %>%
-  arrange(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only)
-
-
-
-#check for duplicates
-kelp_raw_build1 %>%
-  dplyr::group_by(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only, subsample_meter, species) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-  dplyr::filter(n > 1L)
-
-#only one duplicate ... take first entry
-kelp_raw_build2_other <- kelp_raw_build1 %>%
-  filter(species != "MACPYR") %>%
-  pivot_wider(
-    names_from = "species", 
-    values_from = "count",
-    values_fn = function(x) x[1],  # Take the first value
-    values_fill = NA
+# Summarize raw kelp data
+kelp_raw_summary <- kelp_raw_build1 %>%
+  group_by(site, date, transect, depth_units, segment, species) %>%
+  summarise(
+    count_raw = list(sort(count)),
+    stipe_raw = list(sort(stipe_counts_macrocystis_only)),
+    .groups = "drop"
   )
 
-kelp_qc_build2_mac <- kelp_qc_build1 %>%
-  filter(species == "MACPYR")%>%
-  arrange(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only)
-
-
-#check for duplicates
-kelp_qc_build1 %>%
-  dplyr::group_by(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only, subsample_meter, species) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-  dplyr::filter(n > 1L)
-
-#No duplicates, but keep code for consistency
-kelp_qc_build2_other <- kelp_qc_build1 %>%
-  filter(species != "MACPYR") %>%
-  pivot_wider(
-    names_from = "species", 
-    values_from = "count",
-    values_fn = function(x) x[1],  # Take the first value
-    values_fill = NA
+# Summarize QC kelp data
+kelp_qc_summary <- kelp_qc_build1 %>%
+  group_by(site, date, transect, depth_units, segment, species) %>%
+  summarise(
+    count_qc = list(sort(count)),
+    stipe_qc = list(sort(stipe_counts_macrocystis_only)),
+    .groups = "drop"
   )
 
-View(anti_join(kelp_qc_build2_mac, kelp_raw_build2_mac))
+# Join the summaries and compare the lists
+kelp_discrep_values <- inner_join(
+  kelp_raw_summary,
+  kelp_qc_summary,
+  by = c("site", "date", "transect", "depth_units", "segment", "species")
+) %>%
+  mutate(
+    count_diff = map2_chr(count_raw, count_qc, ~
+                            if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    stipe_diff = map2_chr(stipe_raw, stipe_qc, ~
+                            if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y)))
+  ) %>%
+  # Keep only groups where either count or stipe values differ
+  filter(!is.na(count_diff) | !is.na(stipe_diff))
 
-macro_discrep_values <- kelp_qc_build2_mac %>%
-  full_join(kelp_raw_build2_mac, 
-            by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units"), 
-            suffix = c("_qc", "_raw")) 
+
+#write csv
+temp_file <- tempfile(fileext = ".csv")
+write_csv(kelp_discrep_values, temp_file)
+
+drive_upload(
+  media = temp_file,
+  path = as_id("1G1JaycgihbplJ2pOED_mXs-895hx4chS"),
+  name = "kelp_discrep_values.csv",
+  overwrite = TRUE
+)
+
+
+
+
+
+
+
+
+
 
