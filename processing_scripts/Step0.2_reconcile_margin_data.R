@@ -541,11 +541,208 @@ drive_upload(
 )
 
 
+################################################################################
+# process urchin density
+
+urch_den_raw_build1 <- urchin_den_raw %>%
+  #########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
+  select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
+  # Apply standard site naming
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
+    transect = as.numeric(transect),
+    depth_start = as.numeric(parse_number(na_if(as.character(depth_start), "NULL"))),
+    depth_end = as.numeric(parse_number(na_if(as.character(depth_end), "NULL"))),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    purple_density = as.numeric(purple_density),
+    subsample_meter_13 = as.numeric(subsample_meter_13),
+    purple_conceiled = as.numeric(purple_conceiled),
+    red_density = as.numeric(red_density),
+    subsample_meter_16 = as.numeric(subsample_meter_16),
+    red_conceiled = as.numeric(red_conceiled)
+  ) %>%
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #drop field that are not needed
+  select(-observer, -buddy, -name_of_data_enterer)
 
 
 
+urch_den_qc_build1 <- urchin_den_qc %>%
+  #########################
+# General tidying
+#########################
+# Remove example first row and classifiers
+slice(-1) %>%
+  select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
+  # Apply standard site naming
+  mutate(
+    # Use a function within str_replace to process each match
+    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
+  # Set data types
+  mutate(
+    name_of_data_enterer = as.factor(name_of_data_enterer),
+    site = as.factor(site),
+    date = ymd(date),  # converts date to year-month-day format
+    heading_out = as.numeric(heading_out),
+    observer = as.character(observer),
+    buddy = as.character(buddy),
+    transect = as.numeric(transect),
+    depth_start = as.numeric(parse_number(na_if(as.character(depth_start), "NULL"))),
+    depth_end = as.numeric(parse_number(na_if(as.character(depth_end), "NULL"))),
+    depth_units = as.factor(depth_units),
+    segment = as.factor(segment),
+    purple_density = as.numeric(purple_density),
+    subsample_meter_13 = as.numeric(subsample_meter_13),
+    purple_conceiled = as.numeric(purple_conceiled),
+    red_density = as.numeric(red_density),
+    subsample_meter_16 = as.numeric(subsample_meter_16),
+    red_conceiled = as.numeric(red_conceiled)
+  ) %>%
+  #convert segment to numeric
+  mutate(segment = case_when(
+    segment == "0-5M" ~ 5,
+    segment == "5-10M" ~ 10,
+    segment == "10-15M" ~ 15,
+    segment == "15-20M" ~ 20,
+    segment == "20-25M" ~ 25,
+    segment == "25-30M" ~ 30,
+    segment == "30-35M" ~ 35,
+    segment == "35-40M" ~ 40,
+    segment == "40-45M" ~ 45,
+    segment == "45-50M" ~ 50,
+    segment == "50-55M" ~ 55,
+    segment == "55-60M" ~ 60,
+    segment == "60-65M" ~ 65,
+    segment == "65-70M" ~ 70,
+    segment == "70-75M" ~ 75,
+    segment == "75-80M" ~ 80,
+    TRUE ~ NA_real_  # Set NA for any unexpected values
+  )) %>%
+  #drop field that are not needed
+  select(-observer, -buddy, -name_of_data_enterer)
+
+
+str(urch_den_raw_build1)
+str(urch_den_qc_build1)
 
 
 
+# Summarize raw urchin density data with the new names
+urch_den_raw_summary <- urch_den_raw_build1 %>%
+  group_by(site, date, transect, depth_units, segment) %>%
+  summarise(
+    purple_density_raw         = list(sort(purple_density)),
+    subsample_purple_meter_raw = list(sort(subsample_meter_13)),  # renamed column
+    purple_conceiled_raw       = list(sort(purple_conceiled)),
+    red_density_raw            = list(sort(red_density)),
+    subsample_red_meter_raw    = list(sort(subsample_meter_16)),  # renamed column
+    red_conceiled_raw          = list(sort(red_conceiled)),
+    .groups = "drop"
+  )
 
+# Summarize QC urchin density data with the new names
+urch_den_qc_summary <- urch_den_qc_build1 %>%
+  group_by(site, date, transect, depth_units, segment) %>%
+  summarise(
+    purple_density_qc         = list(sort(purple_density)),
+    subsample_purple_meter_qc = list(sort(subsample_meter_13)),  # renamed column
+    purple_conceiled_qc       = list(sort(purple_conceiled)),
+    red_density_qc            = list(sort(red_density)),
+    subsample_red_meter_qc    = list(sort(subsample_meter_16)),  # renamed column
+    red_conceiled_qc          = list(sort(red_conceiled)),
+    .groups = "drop"
+  )
 
+# Join summaries and compare the corresponding lists
+urch_den_discrep_values <- inner_join(
+  urch_den_raw_summary, 
+  urch_den_qc_summary,
+  by = c("site", "date", "transect", "depth_units", "segment")
+) %>%
+  mutate(
+    purple_density_diff = map2_chr(purple_density_raw, purple_density_qc, ~ 
+                                     if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    subsample_purple_meter_diff = map2_chr(subsample_purple_meter_raw, subsample_purple_meter_qc, ~ 
+                                             if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    purple_conceiled_diff = map2_chr(purple_conceiled_raw, purple_conceiled_qc, ~ 
+                                       if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    red_density_diff = map2_chr(red_density_raw, red_density_qc, ~ 
+                                  if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    subsample_red_meter_diff = map2_chr(subsample_red_meter_raw, subsample_red_meter_qc, ~ 
+                                          if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y))),
+    red_conceiled_diff = map2_chr(red_conceiled_raw, red_conceiled_qc, ~ 
+                                    if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y)))
+  ) %>%
+  # Keep only groups where at least one discrepancy was detected
+  filter(
+    !is.na(purple_density_diff) |
+      !is.na(subsample_purple_meter_diff) |
+      !is.na(purple_conceiled_diff) |
+      !is.na(red_density_diff) |
+      !is.na(subsample_red_meter_diff) |
+      !is.na(red_conceiled_diff)
+  )
+
+#write csv
+temp_file <- tempfile(fileext = ".csv")
+write_csv(urch_den_discrep_values, temp_file)
+
+drive_upload(
+  media = temp_file,
+  path = as_id("1G1JaycgihbplJ2pOED_mXs-895hx4chS"),
+  name = "urchin_den_discrep_values.csv",
+  overwrite = TRUE
+)
