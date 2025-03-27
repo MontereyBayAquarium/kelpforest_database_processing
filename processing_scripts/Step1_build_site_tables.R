@@ -147,7 +147,17 @@ select(survey_type, region, site = site_name_2025, site_type = site_type_2025,
            latitude = new_latitude, longitude = new_longitude, latitude_old = old_latitude,
        longitude_old = old_longitude, survey_date_2024 = original_survey_date_official,
            notes
-         ) 
+         ) %>%
+  #set data types
+  mutate(
+    survey_type = factor(survey_type),
+    region = factor(region),
+    site = factor(site),
+    site_type = factor(site_type),
+    site_old = factor(site_old),
+    site_type_old = factor(site_type_old),
+    zone = factor(zone),
+  )
        
 
 ################################################################################
