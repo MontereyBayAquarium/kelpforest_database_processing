@@ -88,35 +88,49 @@ marge_build1 <- margin_orig %>%
 #Step 2: process recovery data
 
 reco_build1 <- recovery_orig %>%
-  #drop columns
-  select(-site_long_1, -site_short) %>%
   mutate(across(everything(), as.character)) %>%       # Convert all columns to character
   mutate(across(everything(), ~ na_if(., "NULL"))) %>% # Replace "NULL" with NA
   type_convert()   %>%
   #set column types
-  mutate(survey_type = factor(survey_type),
+  mutate(site_long = factor(site_long),
+         survey_type = factor(survey_type),
          region = factor(region),
-         site_name = factor(site_name),
-         site_type = factor(site_type),
-         site_long_7 = factor(site_long_7),
+         site_name_2024 = factor(site_name_2024),
+         site_type_2024 = factor(site_type_2024),
+         site_short_2024 = factor(site_short_2024),
+         site_long_2024 = factor(site_long_2024),
+         site_name_2025 = factor(site_name_2025),
+         site_type_2025 = factor(site_type_2025),
          transect = factor(transect),
-         target_latitude = as.numeric(target_latitude),
-         target_longitude = as.numeric(target_longitude),
-         actual_latitude = as.numeric(actual_latitude),
-         actual_longitude = as.numeric(actual_longitude),
+         old_latitude = as.numeric(old_latitude),
+         old_longitude = as.numeric(old_longitude),
+         new_latitude = as.numeric(new_latitude),
+         new_longitude = as.numeric(new_longitude),
+         reprojected_coords = factor(reprojected_coords),
+         target_depth_meters = as.numeric(target_depth_meters),
+         uc_heading = as.numeric(uc_heading),
+         dc_heading = as.numeric(dc_heading),
          original_date_surveyed = as.Date(original_date_surveyed, format = "%Y-%m-%d"),
          resite_date = as.Date(resite_date, format = "%Y-%m-%d"),
          in_stack = factor(in_stack),
          notes = as.character(notes)
   ) %>%
-  #drop sites that were never surveyed
-  filter((in_stack =="yes")) %>% #sites where in_stack == yes means they were in the raw data
   # Replace date_surveyed with resite_date if resite_date is not NA
-  rename(site = site_name)%>%
+  mutate(original_survey_date_official = if_else(is.na(resite_date),original_date_surveyed,resite_date))%>%
   # Apply standard site naming
   mutate(
     # Use a function within str_replace to process each match
-    site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+    site_name_2025 = str_replace(site_name_2025, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    }),
+    site_name_2024 = str_replace(site_name_2024, "([A-Za-z]+)([0-9]+)", function(x) {
       # Extract letters and numbers
       parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
       letters <- toupper(parts[, 2])   # Convert to uppercase if needed
@@ -127,23 +141,13 @@ reco_build1 <- recovery_orig %>%
       paste0(letters, "_", numbers_padded)
     })
   ) %>%
-  rename(original_survey_date = original_date_surveyed)%>%
-  mutate(resite_conducted = ifelse(is.na(resite_date), "no", "yes"),
-         official_survey_date = coalesce(resite_date, original_survey_date),
-         #fix lat/longs
-         actual_latitude = coalesce(actual_latitude, target_latitude),
-         actual_longitude = coalesce(actual_longitude, target_longitude)
-  ) %>%
   #drop columns and rename
-  select(-target_latitude, -target_longitude, 
-         -in_stack) %>% select(
-           survey_type, region, site, site_type, site_long = site_long_7,
-           zone = transect, latitude = actual_latitude, longitude = actual_longitude,
-           official_survey_date, original_survey_date, resite_date, resite_conducted,
+select(survey_type, region, site = site_name_2025, site_type = site_type_2025,
+       site_old = site_name_2024, site_type_old = site_type_2024, zone = transect,
+           latitude = new_latitude, longitude = new_longitude, latitude_old = old_latitude,
+       longitude_old = old_longitude, survey_date_2024 = original_survey_date_official,
            notes
-         ) %>%
-  #set data types
-  mutate(site = as.factor(site))
+         ) 
        
 
 ################################################################################
