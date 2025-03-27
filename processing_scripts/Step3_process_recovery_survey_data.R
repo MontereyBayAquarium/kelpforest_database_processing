@@ -8,6 +8,8 @@
 ################################################################################
 #progress
 
+#TO DO: update site names with new site table
+
 #step 1 - complete 
 #step 2 - complete
 #step 3 - complete
@@ -40,19 +42,10 @@ urchin_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t
 kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
                        sheet = 3) %>% clean_names()
 
-#site metdata
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
-              rename(survey_date = official_survey_date)%>%
-              #recreate factors for join
-              mutate(
-                survey_type = as.factor(survey_type),
-                region = as.factor(region),
-                site = as.factor(site),
-                site_type = as.factor(site_type),
-                site_long = as.factor(site_long)
-              )
+#site table
+reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
 
-lat_long <- reco_meta %>% select(site, site_type, zone, survey_date, latitude,
+lat_long <- reco_meta %>% select(site, site_type, zone, survey_date_2024, latitude,
                                  longitude)
 
 ################################################################################
