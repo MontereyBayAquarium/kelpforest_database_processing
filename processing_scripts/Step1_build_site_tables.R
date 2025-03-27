@@ -153,8 +153,8 @@ select(survey_type, region, site = site_name_2025, site_type = site_type_2025,
 ################################################################################
 #Step 3: export
 
-write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 5 Nov 2024
+write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 27 Mar 2025
 
-write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 29 Oct 2024
+write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 27 Mar 2025
 
 
