@@ -43,10 +43,9 @@ kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5w
                        sheet = 3) %>% clean_names()
 
 #site table
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
-
-lat_long <- reco_meta %>% select(site, site_type, zone, survey_date_2024, latitude,
-                                 longitude)
+reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
+  select(site_new = site, site_type_new = site_type, site_old, site_type_old,
+         zone, latitude, longitude, survey_date_2024)
 
 ################################################################################
 #Step 1 - process quadrat data
@@ -143,12 +142,20 @@ quad_build <- quad_raw %>%
   ##############################################################################
   #join with site table
   ##############################################################################
-  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date"))%>%
+  #join by old site names and site type. These were renamed in 2025
+  left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+                              "zone", "survey_date"="survey_date_2024")) %>%
+  #drop sites that were resample
+  filter(!is.na(site_new)) %>%
+  #comment out the above to check what didn't match
+  #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+   #                          "zone", "survey_date"="survey_date_2024"))%>%
       #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
-      #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
-  #join lat/long
-  left_join(lat_long) %>% select(-name_of_data_enterer) %>% 
-  select(site, site_type, survey_date,latitude, longitude, everything())
+      #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+  #clean up
+  select(-name_of_data_enterer, -site, -site_type, -observer_buddy) %>% 
+  select(site = site_new, site_type = site_type_new, survey_date, latitude, 
+         longitude, everything())
   
 # Result: `quad_build` now contains only records with the latest survey dates
 
@@ -261,13 +268,22 @@ urch_build <- urchin_raw %>%
       # Combine parts with underscore
       paste0(letters, "_", numbers_padded)
     }))%>%
-  ##############################################################################
-  #join with site table
-  ##############################################################################
-  semi_join(reco_meta, by = c("site", "site_type", "zone", "survey_date")) %>%
-  left_join(lat_long) %>% select(-name_of_data_enterer) %>% 
-  select(site, site_type, survey_date,latitude, longitude, everything()) %>%
-  select(-observer, -buddy)
+    #join with site table
+    ##############################################################################
+    #join by old site names and site type. These were renamed in 2025
+    left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                "zone", "survey_date"="survey_date_2024")) %>%
+      #drop sites that were resample
+      filter(!is.na(site_new)) %>%
+      #comment out the above to check what didn't match
+      #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+      #                          "zone", "survey_date"="survey_date_2024"))%>%
+      #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+      #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+      #clean up
+      select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
+      select(site = site_new, site_type = site_type_new, survey_date, latitude, 
+             longitude, everything())
 
 #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
 #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
