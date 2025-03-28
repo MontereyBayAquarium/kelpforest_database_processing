@@ -312,7 +312,25 @@ kelp_build <- kelp_raw %>%
   ) %>%
   #convert feet to meters
   mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
-  select(-depth_units, -depth, -date)
+  select(-depth_units, -depth, -date) %>%
+  #join with site table
+  ##############################################################################
+  #join by old site names and site type. These were renamed in 2025
+  left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+                              "zone", "survey_date"="survey_date_2024")) %>%
+    #drop sites that were resample
+    filter(!is.na(site_new)) %>%
+    #comment out the above to check what didn't match
+    #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+    #                          "zone", "survey_date"="survey_date_2024"))%>%
+    #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+    #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+    #clean up
+    select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
+    select(site = site_new, site_type = site_type_new, survey_date, latitude, 
+           longitude, everything())
+
+
 ##############################################################################
   #calculate macro density
 ##############################################################################
@@ -329,7 +347,8 @@ macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
 #add true zeros
 macro_build1 <- reco_meta %>%
   #create list of transects for each site
-  select(site, site_type, zone, latitude, longitude, survey_date)%>%
+  select(site = site_new, site_type = site_type_new, zone, latitude, longitude, 
+         survey_date = survey_date_2024)%>%
   mutate(transect = list(1:4)) %>%
   unnest(transect) %>%
   #add macro
@@ -338,13 +357,20 @@ macro_build1 <- reco_meta %>%
 
 
 ##############################################################################
-#calculate density of everyting else
+#calculate density of all other algae.
+#Note:: Macrocystis is not sub-sampled. All other are. 
 ##############################################################################
 
-
+#need to create scalar for subsample
 scalar <- kelp_build %>% filter(species != "MACPYR") %>%
+          #some observers recorded the actual meter mark rather than distance
+          #sampled. We'll account for that here. 
           mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
+                                 #if the subsample meter is less than 10, it is
+                                #the actual distance sampled.
                                  subsample_meter,
+                                 #otherwise, we need to figure out where they 
+                                #were on the transect and calculate distance. 
                                  ifelse(
                                    subsample_meter >= 10 & subsample_meter <=20, 
                                    (subsample_meter-10),
@@ -358,7 +384,7 @@ scalar <- kelp_build %>% filter(species != "MACPYR") %>%
                                                 10,
                                                 linear_meters_sampled
                                                 ),
-                 #one meter sampled on each side of transect
+                 #one meter sampled on each side of transect. Concert to area
                  area_sampled = linear_meters_sampled*2,
                  scalar = 20-area_sampled
                  )
@@ -396,8 +422,7 @@ kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
     values_from = density_20m2,
     values_fill = 0 #replace NA with true 0
   ) %>% 
-  clean_names() %>%
-  select(-name_of_data_enterer, -observer, -buddy)
+  clean_names() 
 
 
 #join with macro
