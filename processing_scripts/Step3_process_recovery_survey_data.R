@@ -358,38 +358,11 @@ macro_build1 <- reco_meta %>%
 
 ##############################################################################
 #calculate density of all other algae.
-#Note:: Macrocystis is not sub-sampled. All other are. 
+#Note:: Macrocystis is not sub-sampled. All other are. We need to create a 
+#scalar to extrapolate counts to the full transect. 
 ##############################################################################
 
 #need to create scalar for subsample
-scalar <- kelp_build %>% filter(species != "MACPYR") %>%
-          #some observers recorded the actual meter mark rather than distance
-          #sampled. We'll account for that here. 
-          mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
-                                 #if the subsample meter is less than 10, it is
-                                #the actual distance sampled.
-                                 subsample_meter,
-                                 #otherwise, we need to figure out where they 
-                                #were on the transect and calculate distance. 
-                                 ifelse(
-                                   subsample_meter >= 10 & subsample_meter <=20, 
-                                   (subsample_meter-10),
-                                   ifelse(
-                                     subsample_meter >= 20 & subsample_meter <=30, 
-                                     (30-subsample_meter),
-                                    subsample_meter
-                                   )
-                                 )),
-                 linear_meters_sampled = ifelse(is.na(linear_meters_sampled),
-                                                10,
-                                                linear_meters_sampled
-                                                ),
-                 #one meter sampled on each side of transect. Concert to area
-                 area_sampled = linear_meters_sampled*2,
-                 scalar = 20-area_sampled
-                 )
-
-
 kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
   select(-stipe_counts_macrocystis_only) %>%
   #first fix subsample -- note that some observers recorded the transect 
@@ -434,9 +407,10 @@ kelp_build1 <- macro_build1 %>%
 ################################################################################
 #Step 4 - export
 
-write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 6 March 2025
-write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 6 March 2025
-write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 6 March 2025
+write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 28 March 2025
+write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 28 March 2025
+write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 28 March 2025
+
 
 
 
