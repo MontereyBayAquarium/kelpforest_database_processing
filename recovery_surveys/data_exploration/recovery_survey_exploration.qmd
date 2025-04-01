@@ -1,0 +1,86 @@
+---
+title: "Recovery survey exploration"
+format: html
+editor: visual
+---
+
+## Initial exploration of recovery survey data
+
+Explore recovery surveys to examine emergent trends, survey effort, data structure, etc.
+
+## Part 1: explore quadrat data
+
+Step 1: set directories and load data. Note: data are stored on a secured server that requires authentication.
+
+```{r}
+
+require(librarian)
+librarian::shelf(tidyverse, ggplot2, RColorBrewer)
+
+datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
+
+quad_dat <- read_csv(file.path(datdir,"processed/recovery/recovery_quad.csv"))
+
+urch_size_dat <- read_csv(file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv")) 
+
+kelp_dat <- read_csv(file.path(datdir,"processed/recovery/recovery_kelpswath.csv")) #last write 28 March 2025
+
+```
+
+Explore sampling effort for each site
+
+```{r}
+#| echo: false
+
+
+# Reorder zone to put Shallow before Deep
+quad_dat <- quad_dat %>%
+  mutate(zone = factor(zone, levels = c("Shallow", "Deep")))
+
+# Count unique quadrats per site, site type, zone, and transect
+quadrat_counts <- quad_dat %>%
+  group_by(site, site_type, zone, transect) %>%
+  summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
+
+# Bar plot with Dark2 color palette
+ggplot(quadrat_counts, aes(x = num_quadrats, y = as.factor(transect), fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_grid(zone ~ site, scales = "free_y") +  # Facet by zone and site
+  scale_fill_manual(values = brewer.pal(3, "Dark2")) +  # Use Dark2 colors
+  labs(
+    x = "Number of sampled quadrats",
+    y = "Transect",
+    title = "Number of quadrats per site, site type, zone, and transect",
+    fill = "Site Type"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    strip.text = element_text(face = "bold"),  # Bold facet labels
+    panel.grid.major.y = element_blank(),      # Clean up y-axis grid
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10, angle = 0, hjust = 0.5)
+  )
+
+
+```
+
+Check for missing or zero values
+
+```{r}
+#| echo: false
+
+
+# Check missing values
+missing_summary <- quad_dat %>%
+  summarise(across(everything(), ~sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "num_missing")
+
+# Check zeros in density and percent cover columns
+zero_summary <- quad_dat %>%
+  summarise(across(where(is.numeric), ~sum(. == 0))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "num_zeros")
+
+print(zero_summary)
+
+```

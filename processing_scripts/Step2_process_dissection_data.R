@@ -16,19 +16,31 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
 
 #set paths
+datadir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
 datout <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/processed"
 
 #read urchin data
 urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
   clean_names()
 
-################################################################################
+#load site tables
+margin_meta <- read_csv(file.path(datadir, "processed/margin_site_table.csv"))
+recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv")) %>%
+  rename(site_type_new = site_type, site_new = site)
+
 
 ################################################################################
-#Step 1 - process dissection data
 
+################################################################################
+#Step 1 - process dissection data 
 
-gonad_dat <- urch_dat_orig %>%
+#This is the full cleaned dissection data table. However, the site names are
+#uncorrected. This database in useful for general sea urchin morephometrics
+#and date*site is the unique identifier. For pairing data with field survey 
+#data (e.g., margin surveys or recovery surveys), the parsed datasets in the
+#next chunk should be used. 
+
+gonad_dat_full <- urch_dat_orig %>%
   # Replace missing values and clean up variables
   mutate(
     institution = as.factor(institution),
@@ -168,8 +180,14 @@ gonad_dat <- urch_dat_orig %>%
   mutate(gonad_mass_g = gonad_mass_g + 0.000001) %>%
   # Calculate gonad index
   mutate(gonad_index = (gonad_mass_g / animal_24hr_mass_g) * 100) %>%
-  filter(gonad_index < 40) #gonad index should never exceed 40, so these values are incorrect
+  filter(gonad_index < 40)%>% #gonad index should never exceed 40, so these values are incorrect
                           #filtering below 40 results in max GI of 25% which is much more realistic
+  #tidy up
+  mutate(
+    #apply standard site naming convention
+    site_number = str_replace(site_number, "^([A-Za-z]{3})([0-9]+)$", "\\1_\\2"),
+    zone = as.factor(str_to_sentence(zone))
+  ) 
   
 
 #check 
@@ -180,10 +198,50 @@ hist(gonad_dat$gonad_mass_g)
 hist(gonad_dat$soft_tissue_mass_g)
 hist(gonad_dat$gonad_index)
 
+
+################################################################################
+#Step 2 - parse data for recovery surveys -- correct site names and filter 
+#for join
+
+gonad_dat_recovery <- gonad_dat_full %>%
+  #join recovery site table
+  #NOTE: NAs in 'site_new' are because the site was sampled twice. These can 
+  #get dropped later if merging with full databse. 
+  left_join(., recovery_meta, by= c("survey_type","date_collected" = "survey_date_2024",
+                                    "site_number" = "site_old", "site_type" = "site_type_old",
+                                    "zone" = "zone")) %>%
+  filter(survey_type == "Recovery",
+         !(is.na(site_new))) %>%
+  select(date_collected, date_fixed, survey_type, site = site_new,
+         site_type = site_type_new, zone, species, sex, test_height_mm,
+         test_diameter_mm, animal_24hr_mass_g, sample_number, gonad_index,
+         latitude, longitude)
+
+
+################################################################################
+#Step 3 - parse data for margin surveys -- correct site names and filter 
+#for join
+
+gonad_dat_margin <- gonad_dat_full %>%
+  filter(survey_type == "Margin") %>%
+  mutate(transect = as.numeric(transect)) %>%
+  left_join(., margin_meta, by= c("survey_type","date_collected" = "survey_date",
+                                  "transect",
+                                    "site_number" = "site_name_2024")) %>%
+  filter(!(is.na(site_official))) %>%
+  select(survey_type, date_collected, date_fixed, site = site_official,
+         transect, heading_out, latitude, longitude, species, sample_number, sex, test_height_mm,
+         test_diameter_mm, animal_24hr_mass_g, gonad_mass_g, gonad_index)
+
+
 ################################################################################
 #export
 
-write_csv(gonad_dat, file.path(datout, "dissection_data_cleaned.csv")) #last write 29 Oct 2024
+write_csv(gonad_dat_full, file.path(datout, "dissection_data_cleaned.csv")) #last write 1 April 2025
+write_csv(gonad_dat_recovery, file.path(datout, "dissection_data_recovery.csv")) #last write 1 April 2025
+write_csv(gonad_dat_margin, file.path(datout, "dissection_data_margin.csv")) #last write 1 April 2025
+
+
 
 
 
