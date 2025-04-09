@@ -104,8 +104,10 @@ quad_build <- quad_raw %>%
   mutate(total_points = n()) %>%  # Calculate total points per quadrat
   # Calculate percent cover for each species based on the total points that were quantified
   group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
-           transect, quadrat, substrate, species, purple_urchin_densitym2, purple_urchin_conceiledm2,
-           red_urchin_densitym2, red_urchin_conceiledm2, tegula_densitym2, pomaulax_densitym2) %>%
+           transect, quadrat, substrate, relief, risk, species, 
+           purple_urchin_densitym2, purple_urchin_conceiledm2,
+           red_urchin_densitym2, red_urchin_conceiledm2, 
+           tegula_densitym2, pomaulax_densitym2) %>%
   summarise(
     percent_cover = (n() / first(total_points)) * 100,  # Use total points dynamically for each quadrat
     .groups = 'drop'
@@ -153,9 +155,20 @@ quad_build <- quad_raw %>%
       #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
       #REC10 FOR Deep, REC10 FOR Shallow, MAC01
   #clean up
-  select(-name_of_data_enterer, -site, -site_type, -observer_buddy) %>% 
+  #fix relief
+  mutate(relief = ifelse(relief == 730, 30, relief),
+         #apply scalar to relief -- note: relief was estimated in 10cm increments
+         relief_cm = relief*10,
+         #calcualte risk index -- note: risk was estimated in 5cm increments
+         risk_cm = (risk*5) + 141.4, #need to account for diagonal distance
+         risk_index = risk_cm - 141.4 #141.4 is the diagonal distance of the quadrat in cm
+  ) %>%
+  select(-name_of_data_enterer, -site, -site_type, -observer_buddy, -relief,
+         -risk) %>% 
   select(site = site_new, site_type = site_type_new, survey_date, latitude, 
-         longitude, everything())
+         longitude, zone, transect, quadrat, substrate,
+         relief_cm, risk_cm, risk_index, everything()) 
+
   
 # Result: `quad_build` now contains only records with the latest survey dates
 
@@ -407,7 +420,7 @@ kelp_build1 <- macro_build1 %>%
 ################################################################################
 #Step 4 - export
 
-write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 28 March 2025
+write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 7 April 2025
 write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 28 March 2025
 write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 28 March 2025
 
