@@ -14,7 +14,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstacksh
 #gs4_auth()
 
 #set dir
-datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
+datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
 #read original data
 quad_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
@@ -42,14 +42,12 @@ kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21
 
 #site metdata
 reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
-  rename(survey_date = official_survey_date)%>%
   #recreate factors for join
   mutate(
     survey_type = as.factor(survey_type),
     region = as.factor(region),
-    site = as.factor(site),
-    site_type = as.factor(site_type),
-    site_long = as.factor(site_long)
+    site_official = as.factor(site_official),
+    site_type = as.factor(site_type)
   )
 
 ################################################################################
@@ -99,6 +97,8 @@ quad_qc_build1 <-  quad_qc %>%
     substrate = factor(substrate),
     drift_superlayer = as.character(drift_superlayer)
   ) %>%
+  #fix site name
+  mutate(site = str_replace(site, "REC(\\d+)", "REC_\\1"))%>%
   select(-name_of_data_enterer,
          -observer_buddy,
          -write_in,
@@ -117,7 +117,8 @@ quad_discrep_values <- quad_raw_build1 %>%
   inner_join(quad_qc_build1, by = c("site", "site_type", "zone", "survey_date", "transect", "quadrat"), suffix = c("_raw", "_qc")) %>%
   mutate(across(ends_with("_raw"), ~ if_else(. != get(str_replace(cur_column(), "_raw$", "_qc")), paste(.," ≠ ", get(str_replace(cur_column(), "_raw$", "_qc"))), NA_character_), .names = "{.col}_diff")) %>%
   select(site, site_type, zone, survey_date, transect, quadrat, ends_with("_diff")) %>%
-  filter(if_any(ends_with("_diff"), ~ !is.na(.))) 
+  filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
+  mutate(resolved = "")
 
 
 #Export
