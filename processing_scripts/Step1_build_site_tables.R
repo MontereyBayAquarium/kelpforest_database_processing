@@ -1,5 +1,5 @@
 
-#jossmith@mbayaq.org
+
 
 #This script is for processing the site waypoints spreadsheet. 
 #the output is a cleaned metadata file
@@ -14,10 +14,10 @@
 rm(list=ls())
 
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
-gs4_auth()
+#gs4_auth()
 
 #Set paths
-datout <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/processed"
+datout <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed"
 
 #read margin lookup table
 margin_orig <- read_sheet(
@@ -88,35 +88,40 @@ marge_build1 <- margin_orig %>%
 #Step 2: process recovery data
 
 reco_build1 <- recovery_orig %>%
-  mutate(across(everything(), as.character)) %>%       # Convert all columns to character
-  mutate(across(everything(), ~ na_if(., "NULL"))) %>% # Replace "NULL" with NA
-  type_convert()   %>%
-  #set column types
-  mutate(site_long = factor(site_long),
-         survey_type = factor(survey_type),
-         region = factor(region),
-         site_name_2024 = factor(site_name_2024),
-         site_type_2024 = factor(site_type_2024),
-         site_short_2024 = factor(site_short_2024),
-         site_long_2024 = factor(site_long_2024),
-         site_name_2025 = factor(site_name_2025),
-         site_type_2025 = factor(site_type_2025),
-         transect = factor(transect),
-         old_latitude = as.numeric(old_latitude),
-         old_longitude = as.numeric(old_longitude),
-         new_latitude = as.numeric(new_latitude),
-         new_longitude = as.numeric(new_longitude),
-         reprojected_coords = factor(reprojected_coords),
-         target_depth_meters = as.numeric(target_depth_meters),
-         uc_heading = as.numeric(uc_heading),
-         dc_heading = as.numeric(dc_heading),
-         original_date_surveyed = as.Date(original_date_surveyed, format = "%Y-%m-%d"),
-         resite_date = as.Date(resite_date, format = "%Y-%m-%d"),
-         in_stack = factor(in_stack),
-         notes = as.character(notes)
+  data.frame() %>%
+  mutate(across(everything(), as.character)) %>%
+  mutate(across(everything(), ~ na_if(., "NULL"))) %>%
+  type_convert() %>%
+  mutate(
+    site_long = factor(site_long),
+    survey_type = factor(survey_type),
+    region = factor(region),
+    site_name_2024 = factor(site_name_2024),
+    site_type_2024 = factor(site_type_2024),
+    site_short_2024 = factor(site_short_2024),
+    site_long_2024 = factor(site_long_2024),
+    site_name_2025 = factor(site_name_2025),
+    site_type_2025 = factor(site_type_2025),
+    transect = factor(transect),
+    old_latitude = as.numeric(old_latitude),
+    old_longitude = as.numeric(old_longitude),
+    new_latitude = as.numeric(new_latitude),
+    new_longitude = as.numeric(new_longitude),
+    reprojected_coords = factor(reprojected_coords),
+    target_depth_meters = as.numeric(target_depth_meters),
+    uc_heading = as.numeric(uc_heading),
+    dc_heading = as.numeric(dc_heading),
+    original_date_surveyed_2024 = ymd(original_date_surveyed_2024),
+    original_date_surveyed_2025 = mdy(original_date_surveyed_2025),
+    resite_date_2024 = ymd(resite_date_2024),
+    resite_date_2025 = mdy(resite_date_2025),
+    in_stack = factor(in_stack),
+    notes = as.character(notes)
   ) %>%
-  # Replace date_surveyed with resite_date if resite_date is not NA
-  mutate(original_survey_date_official = if_else(is.na(resite_date),original_date_surveyed,resite_date))%>%
+  mutate(
+    survey_date_2024_official = if_else(is.na(resite_date_2024), original_date_surveyed_2024, resite_date_2024),
+    survey_date_2025_official = if_else(is.na(resite_date_2025), original_date_surveyed_2025, resite_date_2025)
+  )%>%
   # Apply standard site naming
   mutate(
     # Use a function within str_replace to process each match
@@ -142,17 +147,18 @@ reco_build1 <- recovery_orig %>%
     })
   ) %>%
   #drop columns and rename
-select(survey_type, region, site = site_name_2025, site_type = site_type_2025,
+select(survey_type, region, site_official = site_name_2025, site_type = site_type_2025,
        site_old = site_name_2024, site_type_old = site_type_2024, zone = transect,
            latitude = new_latitude, longitude = new_longitude, latitude_old = old_latitude,
-       longitude_old = old_longitude, survey_date_2024 = original_survey_date_official,
+       longitude_old = old_longitude, survey_date_2024 = survey_date_2024_official,
+       survey_date_2025 = survey_date_2025_official,
            notes
          ) %>%
   #set data types
   mutate(
     survey_type = factor(survey_type),
     region = factor(region),
-    site = factor(site),
+    site_official = factor(site_official),
     site_type = factor(site_type),
     site_old = factor(site_old),
     site_type_old = factor(site_type_old),
@@ -165,6 +171,6 @@ select(survey_type, region, site = site_name_2025, site_type = site_type_2025,
 
 write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 27 Mar 2025
 
-write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 27 Mar 2025
+write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 31 July 2025
 
 
