@@ -32,7 +32,7 @@ quad_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21
                       sheet = 1) %>% clean_names()
 
 urchin_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
-                        sheet = 2) %>% clean_names()
+                        sheet = 3) %>% clean_names()
 
 
 kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
@@ -127,10 +127,10 @@ quad_file <- "quad_discrep_values.csv"
 quad_keys <- "quad_keys.csv"
 
 # Write the CSV locally
-write_csv(keys_missing_in_quad_qc, quad_keys)
+#write_csv(keys_missing_in_quad_qc, quad_keys)
 
 # Upload to the specified Google Drive folder
-drive_upload(quad_keys, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+#drive_upload(quad_keys, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
 
 
 ################################################################################
@@ -181,7 +181,7 @@ urch_qc_build1 <- urchin_qc %>%
     count = as.numeric(count)
   ) %>%
   # Remove unnecessary columns
-  select(-name_of_data_enterer, -observer, -buddy, -x15) %>%
+  select(-name_of_data_enterer, -observer, -buddy) %>%
   # Arrange by all relevant columns
   arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) %>%
   # Ensure unique species-size per grouping
