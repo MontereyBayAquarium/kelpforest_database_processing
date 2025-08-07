@@ -6,6 +6,37 @@
 
 #Steps involved:
 
+#1: read raw site lookup table from Google drive
+    #***Recovery survey metadata**
+    #site_long = official site name, site type, and zone (shallow or deep) 
+    #survey_type = recovery 
+    #region = Carmel or Monterey
+    #site_name_2024 = site name in year 2024
+    #site_type_2024 = site_type in 2024
+    #site_short_2024 = site name and site type in 2024 without zone
+    #site_long_2024 = site name, site type, and zone in 2024
+    #site_name_2025 = new site name in 2025. NOTE: sites were renanamed in 2025
+        #to follow a chronological order.
+    #site_type_2025 = new site type in 2025. NOTE: some sites sampled in 2024
+        #were clearly not the anticipated site type (some forests were barrens,
+        #barrens were forests, etc.). These were redesignated after the 2024 field
+        #season. The site_type_2025 is the official site type to use. 
+    #transect = shallow (5-12 meters, typically) or deep (12-20 meters, typically)
+    #old_latitude = planned latitude 
+    #old_longitude = planned longitude
+    #new_latitude = actual latitude surveyed
+    #new_longitude = actual longitude surveyed
+    #reprojected_coords = no means site was not relocated, yes = site was relocated
+    #target_depth_meters = target depth in meters
+    #uc_heading = upcoast heading for transects 1 and 2 
+    #dc_heading = downcoast heading for transects 3 and 4
+    #original_date_surveyed_2024 = date the site was first sampled in 2024
+    #resite_date_2024 = date the site was resampled, often due to incomplete
+        #sampling from original survey date. 
+    #original_survey_date_2025 = date the site was first sampled in 2024
+    #resite_date_2025 = date the site was first sampled in 2025
+    #in_stack = index of whether the physical data are catalogued. 
+    #notes = notes
 
 
 ################################################################################
@@ -118,6 +149,8 @@ reco_build1 <- recovery_orig %>%
     in_stack = factor(in_stack),
     notes = as.character(notes)
   ) %>%
+  #create an official survey date. If a site was resampled, the official survey
+  #date is the most recent sampling date for a given year. 
   mutate(
     survey_date_2024_official = if_else(is.na(resite_date_2024), original_date_surveyed_2024, resite_date_2024),
     survey_date_2025_official = if_else(is.na(resite_date_2025), original_date_surveyed_2025, resite_date_2025)
@@ -147,10 +180,15 @@ reco_build1 <- recovery_orig %>%
     })
   ) %>%
   #drop columns and rename
-select(survey_type, region, site_official = site_name_2025, site_type = site_type_2025,
+select(survey_type, region, 
+       #official site name and type becomes the 2025 designation
+       site_official = site_name_2025, site_type = site_type_2025,
        site_old = site_name_2024, site_type_old = site_type_2024, zone = transect,
            latitude = new_latitude, longitude = new_longitude, latitude_old = old_latitude,
-       longitude_old = old_longitude, survey_date_2024 = survey_date_2024_official,
+       longitude_old = old_longitude, 
+       #official 2024 survey date is the most recent date for that year
+       survey_date_2024 = survey_date_2024_official,
+       #official 2025 survey date is the most recent date for that year
        survey_date_2025 = survey_date_2025_official,
            notes
          ) %>%
@@ -164,6 +202,12 @@ select(survey_type, region, site_official = site_name_2025, site_type = site_typ
     site_type_old = factor(site_type_old),
     zone = factor(zone),
   )
+
+##NOTE: joining site table with the survey data based on survey date will 
+#only include the most recent sampling date for a given year. This is intentional,
+#since sites were resampled within a year only if there was an issue with the first
+#sampling attempt. 
+
        
 
 ################################################################################
@@ -171,6 +215,6 @@ select(survey_type, region, site_official = site_name_2025, site_type = site_typ
 
 write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 27 Mar 2025
 
-write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 31 July 2025
+write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 07 August 2025
 
 
