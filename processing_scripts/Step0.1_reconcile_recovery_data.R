@@ -25,6 +25,19 @@
         #in a later step where the reconciled data are processed.
     #2b: identify mismatched entries
 
+#3: compare first and second kelp swath entries
+    #3a: set data types and apply standard site naming convention. Official 
+        #site names and types are irrelevant at this stage. These are handled
+        #in a later step where the reconciled data are processed.
+    #3b: identify mismatched entries for species other than MACPYR
+    #3c: identify mismatched entries for MACPYR
+
+#4: compare first and second dermasterias entries
+    #4a: set data types and apply standard site naming convention. Official 
+        #site names and types are irrelevant at this stage. These are handled
+        #in a later step where the reconciled data are processed.
+    #4b: identify mismatched entries 
+
 ################################################################################
 
 rm(list=ls())
@@ -47,6 +60,9 @@ urchin_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUq
 kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
                        sheet = 3) %>% clean_names()
 
+derm_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1i9rHc8EAjMcqUqUDwjHtGhytUdG49VTSG9vfKmDPerQ/edit?gid=0#gid=0",
+                       sheet = 4) %>% clean_names()
+
 #read QAQC data
 quad_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
                       sheet = 1) %>% clean_names()
@@ -56,8 +72,10 @@ urchin_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM
 
 
 kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
-                      sheet = 3) %>% clean_names()
+                      sheet = 4) %>% clean_names()
 
+derm_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
+              sheet = 2) %>% clean_names()
 
 
 #site metdata
@@ -234,7 +252,7 @@ quad_urchin <- "quad_urchin.csv"
 #*Code below is incomplete.
 #**************************
 
-# Process kelp entry
+# Step 3a: apply standard site naming 
 kelp_raw_build1 <- kelp_raw %>%
   slice(-1) %>%
   data.frame() %>%
@@ -285,54 +303,155 @@ kelp_qc_build1 <- kelp_qc %>%
   distinct()
 
 
-#step 2: separate macrocystis and make wider
-kelp_raw_build2_mac <- kelp_raw_build1 %>%
+# Step 3b: Identify mismatched entries for species other than macro
+kelp_discrep_values <- kelp_qc_build1 %>%
+  full_join(kelp_raw_build1, 
+            by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units", "species"), 
+            suffix = c("_qc", "_raw")) %>%
+  #
+  filter(species != "MACPYR") %>%
+  # Identify differences across key columns
+  mutate(
+    stipe_diff = if_else(stipe_counts_macrocystis_only_qc != stipe_counts_macrocystis_only_raw,
+                         paste0(stipe_counts_macrocystis_only_raw, " ≠ ", stipe_counts_macrocystis_only_qc), NA_character_),
+    count_diff = if_else(count_qc != count_raw,
+                         paste0(count_raw, " ≠ ", count_qc), NA_character_),
+    subsample_diff = if_else(subsample_meter_qc != subsample_meter_raw,
+                             paste0(subsample_meter_raw, " ≠ ", subsample_meter_qc), NA_character_)
+  ) %>%
+  # Filter to rows where at least one mismatch occurred
+  filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
+  select(site, site_type, zone, date, transect, depth, depth_units, species,
+         stipe_diff, count_diff, subsample_diff) %>%
+  arrange(site, zone, date, transect, depth, species)
+
+
+# Step 3b: Identify mismatched entries for MACPYR
+group_cols <- c("site", "site_type", "zone", "date", "transect", "depth", "depth_units")
+
+# Filter MACPYR only
+macpyr_raw <- kelp_raw_build1 %>%
   filter(species == "MACPYR") %>%
-  arrange(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only)
+  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%
+  mutate(source = "raw")
+
+macpyr_qc <- kelp_qc_build1 %>%
+  filter(species == "MACPYR") %>%
+  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%
+  mutate(source = "qc")
+
+# Combine both
+macpyr_combined <- bind_rows(macpyr_raw, macpyr_qc)
+
+# Count stipe values within each group and source
+macpyr_summary <- macpyr_combined %>%
+  group_by(across(all_of(group_cols)), stipe_counts_macrocystis_only, source) %>%
+  tally(name = "count") %>%
+  pivot_wider(names_from = source, values_from = count, values_fill = 0)
+
+# Find mismatches
+macpyr_discrep <- macpyr_summary %>%
+  filter(raw != qc) %>%
+  arrange(site, zone, date, transect, depth, stipe_counts_macrocystis_only)
+
+
+#Export
+# Define file path for export
+quad_urchin <- "swath_kelp.csv"
+
+# Write the CSV locally
+#write_csv(kelp_discrep_values, swath_kelp)
+
+# Upload to the specified Google Drive folder
+#drive_upload(swath_kelp, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
 
 
 
-#check for duplicates
-kelp_raw_build1 %>%
-  dplyr::group_by(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only, subsample_meter, species) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-  dplyr::filter(n > 1L)
+################################################################################
+# Steo 4 process dermasterias entry
 
-#only one duplicate ... take first entry
-kelp_raw_build2_other <- kelp_raw_build1 %>%
-  filter(species != "MACPYR") %>%
-  pivot_wider(
-    names_from = "species", 
-    values_from = "count",
-    values_fn = function(x) x[1],  # Take the first value
-    values_fill = NA
-  )
+#step 4a: set data types and apply standard site naming convention
+derm_raw_build1 <- derm_raw %>%
+  data.frame() %>%
+  # Set column types
+  mutate(
+    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
+    site = as.character(site),
+    site_type = as.character(site_type),
+    zone = as.character(zone),
+    date = ymd(date),
+    transect = as.numeric(transect),
+    depth = as.numeric(depth),
+    depth_units = as.character(depth_units),
+    species = as.character(species),
+    size = as.numeric(size),
+    count = as.numeric(count),
+    diet = as.factor(diet)
+  ) %>%
+  # Remove unnecessary columns
+  select(-name_of_data_enterer, -windows_ctrl_alt_shift_1_mac_command_option_shift_1,
+         -observer, -buddy) %>%
+  # Arrange by all relevant columns
+  arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) 
 
-kelp_qc_build2_mac <- kelp_qc_build1 %>%
-  filter(species == "MACPYR")%>%
-  arrange(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only)
+derm_qc_build1 <- derm_qc %>%
+  data.frame() %>%
+  # Set column types
+  mutate(
+    site = str_replace(site, "REC(\\d+)", "REC_\\1"),
+    site = as.character(site),
+    site_type = as.character(site_type),
+    zone = as.character(zone),
+    date = ymd(date),
+    transect = as.numeric(transect),
+    depth = as.numeric(depth),
+    depth_units = as.character(depth_units),
+    species = as.character(species),
+    size = as.numeric(size),
+    count = as.numeric(count),
+    diet = as.factor(diet)
+  ) %>%
+  # Remove unnecessary columns
+  select(-name_of_data_enterer, -windows_ctrl_alt_shift_1_mac_command_option_shift_1,
+         -observer, -buddy) %>%
+  # Arrange by all relevant columns
+  arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) 
 
 
-#check for duplicates
-kelp_qc_build1 %>%
-  dplyr::group_by(site, site_type, zone, date, transect, depth, depth_units, stipe_counts_macrocystis_only, subsample_meter, species) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-  dplyr::filter(n > 1L)
+# tep 4b: Identify mismatched entries
+derm_discrep_values <- derm_qc_build1 %>%
+  inner_join(derm_raw_build1, 
+             by = c("site", "site_type", "zone", "date", "transect", 
+                    "depth", "depth_units", "species", "size"), 
+             suffix = c("_qc", "_raw")) %>%
+  # Compare count and diet values
+  mutate(
+    count_diff = if_else(count_raw != count_qc, 
+                         paste(count_raw, "≠", count_qc), 
+                         NA_character_),
+    
+    diet_diff = if_else(as.character(diet_raw) != as.character(diet_qc), 
+                        paste(as.character(diet_raw), "≠", as.character(diet_qc)), 
+                        NA_character_)
+  ) %>%
+  # Keep only mismatches
+  filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
+  # Select relevant columns
+  select(site, site_type, zone, date, transect, depth, depth_units, 
+         species, size, count_diff, diet_diff) %>%
+  arrange(site, zone, date, transect, depth, species, size) %>%
+  mutate(resolved = "")
 
-#No duplicates, but keep code for consistency
-kelp_qc_build2_other <- kelp_qc_build1 %>%
-  filter(species != "MACPYR") %>%
-  pivot_wider(
-    names_from = "species", 
-    values_from = "count",
-    values_fn = function(x) x[1],  # Take the first value
-    values_fill = NA
-  )
 
-View(anti_join(kelp_qc_build2_mac, kelp_raw_build2_mac))
+#Export
+# Define file path for export
+swath_derm <- "swath_derm.csv"
 
-macro_discrep_values <- kelp_qc_build2_mac %>%
-  full_join(kelp_raw_build2_mac, 
-            by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units"), 
-            suffix = c("_qc", "_raw")) 
+# Write the CSV locally
+#write_csv(derm_discrep_values, swath_derm)
+
+# Upload to the specified Google Drive folder
+#drive_upload(swath_derm, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+
+
 
