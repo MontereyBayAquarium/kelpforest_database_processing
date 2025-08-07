@@ -19,7 +19,11 @@
           #data or line that were entered twice, etc.)
     #1c: identify mismatches quadrat data entries. 
 
-#2: 
+#2: compare first and second sea urchin size data entry
+    #2a: set data types and apply standard site naming convention. Official 
+        #site names and types are irrelevant at this stage. These are handled
+        #in a later step where the reconciled data are processed.
+    #2b: identify mismatched entries
 
 ################################################################################
 
@@ -143,9 +147,9 @@ quad_keys <- "quad_keys.csv"
 
 
 ################################################################################
-# process urchin entry
+# process urchin size entry
 
-# Process urchin entry
+#step 2a: set data types and apply standard site naming convention
 urch_raw_build1 <- urchin_raw %>%
   slice(-1) %>%
   data.frame() %>%
@@ -168,7 +172,7 @@ urch_raw_build1 <- urchin_raw %>%
   select(-name_of_data_enterer, -observer, -buddy, -x15) %>%
   # Arrange by all relevant columns
   arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) %>%
-  # Ensure unique species-size per grouping
+  # Ensure unique species-size per grouping. We can drop rows that are duplicates
   distinct()
 
 urch_qc_build1 <- urchin_qc %>%
@@ -193,26 +197,19 @@ urch_qc_build1 <- urchin_qc %>%
   select(-name_of_data_enterer, -observer, -buddy) %>%
   # Arrange by all relevant columns
   arrange(site, site_type, zone, date, transect, depth, depth_units, species, size) %>%
-  # Ensure unique species-size per grouping
+  # Ensure unique species-size per grouping. We can drop rows that are duplicates
   distinct()
 
 
-# **Step 1: Find missing keys**
-urch_discrep <- anti_join(urch_raw_build1, urch_qc_build1, 
-                          by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units", "species", "size"))
-
-# **Step 2: Identify discrepancies within matching groups**
+#Step 2b: idnetify mismatched entries
 urch_discrep_values <- urch_qc_build1 %>%
   inner_join(urch_raw_build1, 
              by = c("site", "site_type", "zone", "date", "transect", "depth", "depth_units", "species", "size"), 
              suffix = c("_raw", "_qc")) %>%
-  
   # Compare count values
   mutate(count_diff = if_else(count_raw != count_qc, paste(count_raw, "≠", count_qc), NA_character_)) %>%
-  
   # Keep only mismatches
   filter(!is.na(count_diff)) %>%
-  
   # Select relevant columns for output
   select(site, site_type, zone, date, transect, depth, depth_units, species, size, count_diff)
 
@@ -223,10 +220,10 @@ urch_discrep_values <- urch_qc_build1 %>%
 quad_urchin <- "quad_urchin.csv"
 
 # Write the CSV locally
-write_csv(urch_discrep_values, quad_urchin)
+#write_csv(urch_discrep_values, quad_urchin)
 
 # Upload to the specified Google Drive folder
-drive_upload(quad_urchin, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+#drive_upload(quad_urchin, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
 
 
 ################################################################################
