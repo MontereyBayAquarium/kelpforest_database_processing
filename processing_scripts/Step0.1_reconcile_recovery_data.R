@@ -5,6 +5,22 @@
 # data processing script written by JG.Smith jogsmith@ucsc.edu
 
 
+#context: data were entered twice. This script joins the two separate entries and
+#identifies mismatches. The mismatched entries are then uploaded as a spreadsheet
+#to Google drive for reconciliation. 
+
+#steps involved
+
+#1: compare first and second quadrat extries
+    #1a: set data types and apply standard site naming convention. Official 
+          #site names and types are irrelevant at this stage. These are handled
+          #in a later step where the reconciled data are processed.
+    #1b: identify mismatched metadata keys (useful for finding lines of missing
+          #data or line that were entered twice, etc.)
+    #1c: identify mismatches quadrat data entries. 
+
+#2: 
+
 ################################################################################
 
 rm(list=ls())
@@ -41,18 +57,12 @@ kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21
 
 
 #site metdata
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
-  #recreate factors for join
-  mutate(
-    survey_type = as.factor(survey_type),
-    region = as.factor(region),
-    site_official = as.factor(site_official),
-    site_type = as.factor(site_type)
-  )
+reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
 
 ################################################################################
 # process quadrat entry
 
+#step 1a: set data types and apply standard site naming convention
 quad_raw_build1 <- quad_raw %>%
   # Remove example first row and classifiers
   slice(-1) %>%
@@ -105,14 +115,13 @@ quad_qc_build1 <-  quad_qc %>%
          -notes) 
 
 
-
-# **Step 1: Identify Mismatched Keys**
+#Step 1b: idnetify mismatched metadata keys
 keys_missing_in_quad_qc <- anti_join(quad_raw_build1, quad_qc_build1, 
                                      by = c("site", "site_type", "zone", "survey_date", "transect", "quadrat")) %>%
   select("site", "site_type", "zone", "survey_date", "transect", "quadrat")
 
 
-#Step 2: Deal with non-UPC values first
+#Step 1c: identify mismatched data entries
 quad_discrep_values <- quad_raw_build1 %>%
   inner_join(quad_qc_build1, by = c("site", "site_type", "zone", "survey_date", "transect", "quadrat"), suffix = c("_raw", "_qc")) %>%
   mutate(across(ends_with("_raw"), ~ if_else(. != get(str_replace(cur_column(), "_raw$", "_qc")), paste(.," ≠ ", get(str_replace(cur_column(), "_raw$", "_qc"))), NA_character_), .names = "{.col}_diff")) %>%
