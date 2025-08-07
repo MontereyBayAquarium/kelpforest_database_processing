@@ -2,7 +2,7 @@
 
 ################################################################################
 # About
-# data processing script written by JG.Smith jossmith@mbayaq.org
+# data processing script written by JG.Smith jogsmith@ucsc.edu
 
 
 ################################################################################
