@@ -6,54 +6,55 @@
 
 
 ################################################################################
-#progress
+#steps involved
 
-#TO DO: update site names with new site table
-
-#step 1 - complete 
-#step 2 - complete
-#step 3 - complete
-#step 4 - drafted, needs QC
-
-################################################################################
-#steps still required
-
-#. NEED TO RENAME SITES FOR EVEN BLOCKS -- SEE LINES 190-199
-
+#process year == 2024 and year == 2025 separately
+#rejoin by survey method at the end
 
 ################################################################################
 
 rm(list=ls())
 
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstackshape)
-gs4_auth()
+#gs4_auth()
 
 #set dir
-datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
+datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
-#read reconciled data
-quad_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=0#gid=0",
+#read reconciled data for 2024
+quad_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=0#gid=0",
                        sheet = 1) %>% clean_names()
 
-urchin_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=172495760#gid=172495760",
+urchin_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=172495760#gid=172495760",
                          sheet = 2) %>% clean_names()
 
 
-kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
+kelp_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
                        sheet = 3) %>% clean_names()
 
 #site table
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) %>%
-  select(site_new = site, site_type_new = site_type, site_old, site_type_old,
-         zone, latitude, longitude, survey_date_2024)
+reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
 
 ################################################################################
+################################################################################
+################################################################################
+#Step 1 - process year == 2024
+
+################################################################################
+################################################################################
+################################################################################
+
+#prep site table for join
+reco_meta_2024 <- reco_meta %>%
+                    select(site_official, site_old, site_type_official, site_type_old, zone,
+                           latitude, longitude, survey_date_2024)
+
 #Step 1 - process quadrat data
 
 #inspect
-View(quad_raw)
+View(quad_raw_2024)
 
-quad_build <- quad_raw %>%
+quad_build_2024 <- quad_raw_2024 %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   # Set quadrat to numeric by removing R/L
   mutate(quadrat = str_remove(quadrat, "[RL]$")) %>%
@@ -145,10 +146,10 @@ quad_build <- quad_raw %>%
   #join with site table
   ##############################################################################
   #join by old site names and site type. These were renamed in 2025
-  left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+  left_join(reco_meta_2024, by = c("site" = "site_old", "site_type"="site_type_old", 
                               "zone", "survey_date"="survey_date_2024")) %>%
   #drop sites that were resample
-  filter(!is.na(site_new)) %>%
+  filter(!is.na(site_official)) %>%
   #comment out the above to check what didn't match
   #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
    #                          "zone", "survey_date"="survey_date_2024"))%>%
@@ -165,7 +166,7 @@ quad_build <- quad_raw %>%
   ) %>%
   select(-name_of_data_enterer, -site, -site_type, -observer_buddy, -relief,
          -risk) %>% 
-  select(site = site_new, site_type = site_type_new, survey_date, latitude, 
+  select(survey_date, site = site_official, site_type = site_type_official, latitude, 
          longitude, zone, transect, quadrat, substrate,
          relief_cm, risk_cm, risk_index, everything()) 
 
@@ -174,11 +175,11 @@ quad_build <- quad_raw %>%
 
 #checking
 #check if any instances where conceiled exceeds total counts
-quad_build %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
-quad_build %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
+quad_build_2024 %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
+quad_build_2024 %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
 
 #check for any duplicate sites
-date_counts <- quad_build %>%
+date_counts <- quad_build_2024 %>%
   group_by(site, site_type, zone) %>%
   summarise(num_dates = n_distinct(survey_date), .groups = "drop")
 
@@ -196,7 +197,7 @@ ggplot(date_counts, aes(x = num_dates, y = site, fill = site_type)) +
 
 #check transects
 
-transect_counts <- quad_build %>%
+transect_counts <- quad_build_2024 %>%
   group_by(site, site_type, zone) %>%
   summarise(num_transects = n_distinct(transect), .groups = "drop")
 
@@ -214,7 +215,7 @@ ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
 
 
 #check quadrats
-quadrat_counts <- quad_build %>%
+quadrat_counts <- quad_build_2024 %>%
   group_by(site, site_type, zone, transect) %>%
   summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
 
