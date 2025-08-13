@@ -32,8 +32,14 @@ urchin_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w
 kelp_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
                        sheet = 3) %>% clean_names()
 
-#site table
+#read reconciled data for 2025
+
+#read site table
 reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
+
+
+
+
 
 ################################################################################
 ################################################################################
@@ -417,6 +423,8 @@ kelp_build1_2024 <- macro_build1_2024 %>%
   left_join(kelp_density_2024) %>%
   mutate(across(12:19, ~ replace_na(.x, 0)))
 
+################################################################################
+#join everything
 
 ################################################################################
 #Step 4 - export
