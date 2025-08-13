@@ -307,10 +307,10 @@ urch_build_2024 <- urchin_raw_2024 %>%
 #Step 3 - process swath data
 
 #inspect
-View(kelp_raw)
+View(kelp_raw_2024)
 
 #build kelp
-kelp_build <- kelp_raw %>%
+kelp_build_2024 <- kelp_raw_2024 %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
   # Set column types
   mutate(
@@ -331,10 +331,10 @@ kelp_build <- kelp_raw %>%
   #join with site table
   ##############################################################################
   #join by old site names and site type. These were renamed in 2025
-  left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
-                              "zone", "survey_date"="survey_date_2024")) %>%
+left_join(reco_meta_2024, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                 "zone", "survey_date"="survey_date_2024")) %>%
     #drop sites that were resample
-    filter(!is.na(site_new)) %>%
+    filter(!is.na(site_official)) %>%
     #comment out the above to check what didn't match
     #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
     #                          "zone", "survey_date"="survey_date_2024"))%>%
@@ -342,14 +342,14 @@ kelp_build <- kelp_raw %>%
     #REC10 FOR Deep, REC10 FOR Shallow, MAC01
     #clean up
     select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
-    select(site = site_new, site_type = site_type_new, survey_date, latitude, 
+    select(survey_date, site = site_official, site_type = site_type_official, latitude, 
            longitude, everything())
 
 
 ##############################################################################
   #calculate macro density
 ##############################################################################
-macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
+macro_density_2024 <- kelp_build_2024 %>% filter(species == "MACPYR") %>%
     #macro is not subsampled
     select(-subsample_meter, -count) %>%
     group_by(survey_date, site, site_type, zone, 
@@ -360,16 +360,15 @@ macro_density <- kelp_build %>% filter(species == "MACPYR") %>%
               ) 
 
 #add true zeros
-macro_build1 <- reco_meta %>%
+macro_build1_2024 <- reco_meta_2024 %>%
   #create list of transects for each site
-  select(site = site_new, site_type = site_type_new, zone, latitude, longitude, 
+  select(site = site_official, site_type = site_type_official, zone, latitude, longitude, 
          survey_date = survey_date_2024)%>%
   mutate(transect = list(1:4)) %>%
   unnest(transect) %>%
   #add macro
-  left_join(macro_density) %>%
+  left_join(macro_density_2024) %>%
   mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
-
 
 ##############################################################################
 #calculate density of all other algae.
@@ -378,7 +377,7 @@ macro_build1 <- reco_meta %>%
 ##############################################################################
 
 #need to create scalar for subsample
-kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
+kelp_density_2024 <- kelp_build_2024 %>% filter(species != "MACPYR") %>%
   select(-stipe_counts_macrocystis_only) %>%
   #first fix subsample -- note that some observers recorded the transect 
   #position rather than the meters sampled. If subsample is >10 then it is transect
@@ -414,8 +413,8 @@ kelp_density <- kelp_build %>% filter(species != "MACPYR") %>%
 
 
 #join with macro
-kelp_build1 <- macro_build1 %>%
-  left_join(kelp_density) %>%
+kelp_build1_2024 <- macro_build1_2024 %>%
+  left_join(kelp_density_2024) %>%
   mutate(across(12:19, ~ replace_na(.x, 0)))
 
 
