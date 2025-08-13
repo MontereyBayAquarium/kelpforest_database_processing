@@ -149,8 +149,9 @@ quad_discrep_values <- quad_raw_build1 %>%
   mutate(across(ends_with("_raw"), ~ if_else(. != get(str_replace(cur_column(), "_raw$", "_qc")), paste(.," ≠ ", get(str_replace(cur_column(), "_raw$", "_qc"))), NA_character_), .names = "{.col}_diff")) %>%
   select(site, site_type, zone, survey_date, transect, quadrat, ends_with("_diff")) %>%
   filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
-  mutate(resolved = "")
-
+  mutate(resolved = "") %>%
+  #filter(year(survey_date) == 2024) 
+  filter(year(survey_date) == 2025)
 
 #Export
 # Define file path for export
@@ -158,10 +159,16 @@ quad_file <- "quad_discrep_values.csv"
 quad_keys <- "quad_keys.csv"
 
 # Write the CSV locally
-#write_csv(keys_missing_in_quad_qc, quad_keys)
+#write_csv(quad_discrep_values, quad_file)
 
 # Upload to the specified Google Drive folder
-#drive_upload(quad_keys, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+
+#2024 upload
+#drive_upload(quad_file, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE) 
+
+#2025 upload
+drive_upload(quad_file, path = as_id("1bJmhI7ooyp2tIJXZxYKKRWiEpxKJZyf0"), overwrite = TRUE)
+
 
 
 ################################################################################
@@ -229,28 +236,29 @@ urch_discrep_values <- urch_qc_build1 %>%
   # Keep only mismatches
   filter(!is.na(count_diff)) %>%
   # Select relevant columns for output
-  select(site, site_type, zone, date, transect, depth, depth_units, species, size, count_diff)
-
+  select(site, site_type, zone, date, transect, depth, depth_units, species, size, count_diff) %>%
+  #filter(year(date) == 2024)
+  filter(year(date) == 2025)
 
 
 #Export
 # Define file path for export
-quad_urchin <- "quad_urchin.csv"
+swath_urchin <- "swath_urchin.csv"
 
 # Write the CSV locally
-#write_csv(urch_discrep_values, quad_urchin)
+write_csv(urch_discrep_values, swath_urchin)
 
 # Upload to the specified Google Drive folder
+
+#2024 upload
 #drive_upload(quad_urchin, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
+
+#2025 upload
+drive_upload(swath_urchin, path = as_id("1bJmhI7ooyp2tIJXZxYKKRWiEpxKJZyf0"), overwrite = TRUE)
 
 
 ################################################################################
 # process kelp entry
-
-#**************************
-#*Note: Kelp was ultimately sorted directly within the spreadsheet. 
-#*Code below is incomplete.
-#**************************
 
 # Step 3a: apply standard site naming 
 kelp_raw_build1 <- kelp_raw %>%
@@ -357,14 +365,22 @@ macpyr_discrep <- macpyr_summary %>%
 
 #Export
 # Define file path for export
-quad_urchin <- "swath_kelp.csv"
+swath_kelp <- "swath_kelp.csv"
+swath_macpyr <- "swath_macpyr.csv"
 
 # Write the CSV locally
-#write_csv(kelp_discrep_values, swath_kelp)
+write_csv(kelp_discrep_values, swath_kelp)
+write_csv(macpyr_discrep, swath_macpyr)
+
 
 # Upload to the specified Google Drive folder
+
+#2024 upload
 #drive_upload(swath_kelp, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
 
+#2025 upload
+drive_upload(swath_kelp, path = as_id("1bJmhI7ooyp2tIJXZxYKKRWiEpxKJZyf0"), overwrite = TRUE)
+drive_upload(swath_macpyr, path = as_id("1bJmhI7ooyp2tIJXZxYKKRWiEpxKJZyf0"), overwrite = TRUE)
 
 
 ################################################################################
