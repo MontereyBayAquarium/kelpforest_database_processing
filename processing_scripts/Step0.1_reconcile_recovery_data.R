@@ -464,10 +464,9 @@ derm_discrep_values <- derm_qc_build1 %>%
 swath_derm <- "swath_derm.csv"
 
 # Write the CSV locally
-#write_csv(derm_discrep_values, swath_derm)
+write_csv(derm_discrep_values, swath_derm)
 
 # Upload to the specified Google Drive folder
-#drive_upload(swath_derm, path = as_id("1IaTpgTw6Q8-EDvSo3oONBCMDVIfLyzRB"), overwrite = TRUE)
-
+drive_upload(swath_derm, path = as_id("1bJmhI7ooyp2tIJXZxYKKRWiEpxKJZyf0"), overwrite = TRUE)
 
 
