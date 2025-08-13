@@ -77,10 +77,6 @@ kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21
 derm_qc <- read_sheet("https://docs.google.com/spreadsheets/d/10JlfhROxqXfnPoM21-UUPfGthjCls4uY1UbdxxFRPvg/edit?gid=0#gid=0",
               sheet = 2) %>% clean_names()
 
-
-#site metdata
-reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
-
 ################################################################################
 # process quadrat entry
 
