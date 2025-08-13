@@ -5,4 +5,6 @@ REC_05,BAR,Deep,2025-06-09,3,15.3,Meters,Purple,7,2 ≠ 7
 REC_05,BAR,Shallow,2025-06-09,1,9,Meters,Red,2,1 ≠ 2
 REC_05,BAR,Shallow,2025-06-09,1,9,Meters,Red,3,2 ≠ 3
 REC_05,BAR,Shallow,2025-06-09,4,11.3,Meters,Purple,4,10 ≠ 19
+REC_06,BAR,Shallow,2025-08-11,3,10.9,Meters,Red,7,1 ≠ 7
+REC_06,INCIP,Shallow,2025-08-11,1,9,Meters,Purple,3,2 ≠ 3
 REC_12,BAR,Deep,2025-06-17,4,12,Meters,Purple,3,5 ≠ 6
