@@ -242,7 +242,7 @@ unique(quad_build$quadrat)
 View(urchin_raw)
 
 #build raw size fq
-urch_build <- urchin_raw %>%
+urch_build_2024 <- urchin_raw_2024 %>%
   # Remove example first row and classifiers
   slice(-1) %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
@@ -285,10 +285,10 @@ urch_build <- urchin_raw %>%
     #join with site table
     ##############################################################################
     #join by old site names and site type. These were renamed in 2025
-    left_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
-                                "zone", "survey_date"="survey_date_2024")) %>%
+    left_join(reco_meta_2024, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                 "zone", "survey_date"="survey_date_2024")) %>%
       #drop sites that were resample
-      filter(!is.na(site_new)) %>%
+      filter(!is.na(site_official)) %>%
       #comment out the above to check what didn't match
       #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
       #                          "zone", "survey_date"="survey_date_2024"))%>%
@@ -296,8 +296,9 @@ urch_build <- urchin_raw %>%
       #REC10 FOR Deep, REC10 FOR Shallow, MAC01
       #clean up
       select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
-      select(site = site_new, site_type = site_type_new, survey_date, latitude, 
-             longitude, everything())
+      select(survey_date, site = site_official, site_type = site_type_official, 
+             latitude, longitude, everything())
+
 
 #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
 #REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
