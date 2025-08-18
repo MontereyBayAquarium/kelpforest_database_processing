@@ -331,32 +331,53 @@ kelp_discrep_values <- kelp_qc_build1 %>%
 
 
 # Step 3b: Identify mismatched entries for MACPYR
-group_cols <- c("site", "site_type", "zone", "date", "transect", "depth", "depth_units")
+group_cols <- c("site", "site_type", "zone", "date", "transect")
 
 # Filter MACPYR only
 macpyr_raw <- kelp_raw_build1 %>%
   filter(species == "MACPYR") %>%
-  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%
-  mutate(source = "raw")
+  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%  # keep group cols + stipe counts
+  group_by(site, site_type, zone, date, transect) %>%
+  summarize(
+    n_plants = dplyr::n(),                                  # number of rows/plants
+    total_stipes = sum(stipe_counts_macrocystis_only, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 
 macpyr_qc <- kelp_qc_build1 %>%
   filter(species == "MACPYR") %>%
-  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%
-  mutate(source = "qc")
+  select(all_of(group_cols), stipe_counts_macrocystis_only) %>%  # keep group cols + stipe counts
+  group_by(site, site_type, zone, date, transect) %>%
+  summarize(
+    n_plants = dplyr::n(),                                  # number of rows/plants
+    total_stipes = sum(stipe_counts_macrocystis_only, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Combine both
-macpyr_combined <- bind_rows(macpyr_raw, macpyr_qc)
 
-# Count stipe values within each group and source
-macpyr_summary <- macpyr_combined %>%
-  group_by(across(all_of(group_cols)), stipe_counts_macrocystis_only, source) %>%
-  tally(name = "count") %>%
-  pivot_wider(names_from = source, values_from = count, values_fill = 0)
+keys <- c("site", "site_type", "zone", "date", "transect")
 
-# Find mismatches
-macpyr_discrep <- macpyr_summary %>%
-  filter(raw != qc) %>%
-  arrange(site, zone, date, transect, depth, stipe_counts_macrocystis_only)
+# 1) Value mismatches on shared keys
+macpyr_discrep <- macpyr_raw %>%
+  inner_join(macpyr_qc, by = keys, suffix = c("_raw", "_qc")) %>%
+  mutate(
+    n_plants_diff = if_else(
+      (n_plants_raw != n_plants_qc) | xor(is.na(n_plants_raw), is.na(n_plants_qc)),
+      paste0(n_plants_raw, " ≠ ", n_plants_qc),
+      NA_character_
+    ),
+    total_stipes_diff = if_else(
+      (total_stipes_raw != total_stipes_qc) | xor(is.na(total_stipes_raw), is.na(total_stipes_qc)),
+      paste0(total_stipes_raw, " ≠ ", total_stipes_qc),
+      NA_character_
+    )
+  ) %>%
+  select(all_of(keys), n_plants_diff, total_stipes_diff) %>%
+  filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
+  mutate(resolved = "") %>%
+  arrange(site, date, transect) %>%
+  filter(year(date) == 2025)
 
 
 #Export
