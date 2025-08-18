@@ -18,33 +18,33 @@ datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
 
 #read original data
 upc_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 1) %>% clean_names()
+                       sheet = 1) %>% clean_names() 
 
 urchin_size_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                         sheet = 2) %>% clean_names()
+                         sheet = 3) %>% clean_names() 
 
 
 kelp_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 3) %>% clean_names()
+                       sheet = 2) %>% clean_names()  
 
 
 urchin_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
-                       sheet = 4) %>% clean_names()
+                       sheet = 4) %>% clean_names() 
 
 
 #read QAQC data
 upc_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1buJTQ4sYNnXIyk041N-FwSdVT3pcx_TM_gZXK_3gtNE/edit?gid=0#gid=0",
-                      sheet = 1) %>% clean_names()
+                      sheet = 1) %>% clean_names()  
 
 urchin_size_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1buJTQ4sYNnXIyk041N-FwSdVT3pcx_TM_gZXK_3gtNE/edit?gid=0#gid=0",
-                        sheet = 2) %>% clean_names()
+                        sheet = 3) %>% clean_names() 
 
 
 kelp_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1buJTQ4sYNnXIyk041N-FwSdVT3pcx_TM_gZXK_3gtNE/edit?gid=0#gid=0",
-                      sheet = 3) %>% clean_names()
+                      sheet = 4) %>% clean_names() 
 
 urchin_den_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1buJTQ4sYNnXIyk041N-FwSdVT3pcx_TM_gZXK_3gtNE/edit?gid=0#gid=0",
-                             sheet = 4) %>% clean_names()
+                             sheet = 5) %>% clean_names() 
 
 
 ################################################################################
@@ -55,7 +55,7 @@ upc_raw_build1 <- upc_raw %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
+slice(-1) %>% #only needed for year == 2024
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   data.frame()%>%
   # Apply standard site naming
@@ -96,7 +96,7 @@ slice(-1) %>%
 
 
 upc_qc_build1 <- upc_qc %>%
-  slice(-1) %>%
+  slice(-1) %>% 
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   data.frame() %>%
   mutate(
