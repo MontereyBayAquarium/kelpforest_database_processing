@@ -32,6 +32,18 @@ urchin_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w
 kelp_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=265242012#gid=265242012",
                        sheet = 3) %>% clean_names()
 
+
+#read reconciled data for 2025
+quad_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/1CDyHJqlKW5uRpg2Y9a7cfW5_a-5n_OkGv_RbiEKGDnA/edit?gid=0#gid=0",
+                            sheet = 1) %>% clean_names()
+
+urchin_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/1CDyHJqlKW5uRpg2Y9a7cfW5_a-5n_OkGv_RbiEKGDnA/edit?gid=0#gid=0",
+                              sheet = 3) %>% clean_names()
+
+
+kelp_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/1CDyHJqlKW5uRpg2Y9a7cfW5_a-5n_OkGv_RbiEKGDnA/edit?gid=0#gid=0",
+                            sheet = 4) %>% clean_names()
+
 #read reconciled data for 2025
 
 #read site table
@@ -39,28 +51,52 @@ reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv"))
 
 
 
+################################################################################
+################################################################################
+################################################################################
 
-
-################################################################################
-################################################################################
-################################################################################
 #Step 1 - process year == 2024
 
 ################################################################################
 ################################################################################
 ################################################################################
 
-#prep site table for join
-reco_meta_2024 <- reco_meta %>%
-                    select(site_official, site_old, site_type_official, site_type_old, zone,
-                           latitude, longitude, survey_date_2024)
 
-#Step 1 - process quadrat data
+# Make a tidy site-year mapping key from reco_meta
+reco_map_long <- reco_meta %>%
+  mutate(
+    site_name_official = site_name_2025,
+    site_type_official = site_type_2025
+  ) %>%
+  pivot_longer(
+    cols = c(site_name_2024, site_type_2024, survey_date_2024,
+             site_name_2025, site_type_2025, survey_date_2025),
+    names_to   = c(".value", "source_year"),
+    names_pattern = "(.+)_(2024|2025)$"
+  ) %>%
+  mutate(
+    source_year = as.integer(source_year),
+    zone = as.character(zone)
+  ) %>%
+  select(
+    region, zone, source_year,
+    site_name, site_type, survey_date,   # year-specific keys
+    site_name_official, site_type_official
+  )
 
-#inspect
-View(quad_raw_2024)
+################################################################################
+#process quadrat data
+################################################################################
 
-quad_build_2024 <- quad_raw_2024 %>%
+
+#Step 1 - join 2024 and 2025 data
+
+quad_build1 <- rbind(quad_raw_2024, quad_raw_2025)
+#quickly check that it worked
+nrow(quad_build1)-((nrow(quad_raw_2024)+nrow(quad_raw_2025)))
+
+#Step 2 - process quad data
+quad_build2 <- quad_build1 %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   # Set quadrat to numeric by removing R/L
   mutate(quadrat = str_remove(quadrat, "[RL]$")) %>%
@@ -85,7 +121,7 @@ quad_build_2024 <- quad_raw_2024 %>%
   mutate(across(c(purple_quadrants_sampled, red_quadrants_sampled, tegula_quadrants_sampled, 
                   pomaulax_quadrants_sampled),
                 ~ replace_na(.x, 4))) %>%
-  #now apply scalar
+  #now apply scalar to extrapolate urchin densities to the full quadrat
   mutate(
     purple_urchin_densitym2 = purple_urchins * (4 / purple_quadrants_sampled),
     purple_urchin_conceiledm2 = purple_conceiled * (4 / purple_quadrants_sampled),
@@ -99,7 +135,7 @@ quad_build_2024 <- quad_raw_2024 %>%
          -red_urchins, -red_conceiled, -red_quadrants_sampled,
          -tegula, -tegula_quadrants_sampled, -pomaulax, -pomaulax_quadrants_sampled) %>%
   ##############################################################################
-  #calculate upc
+  #calculate percent cover
   ##############################################################################
   # Step 1: Convert upc1 through upc8 columns to long format
   pivot_longer(cols = starts_with("upc"), names_to = "upc", values_to = "species") %>%
@@ -114,7 +150,8 @@ quad_build_2024 <- quad_raw_2024 %>%
            transect, quadrat, substrate, relief, risk, species, 
            purple_urchin_densitym2, purple_urchin_conceiledm2,
            red_urchin_densitym2, red_urchin_conceiledm2, 
-           tegula_densitym2, pomaulax_densitym2) %>%
+           tegula_densitym2, pomaulax_densitym2, lamr, macr, macj, nerj, ptej, 
+           lsetj, eisj) %>%
   summarise(
     percent_cover = (n() / first(total_points)) * 100,  # Use total points dynamically for each quadrat
     .groups = 'drop'
@@ -128,6 +165,14 @@ quad_build_2024 <- quad_raw_2024 %>%
   mutate(substrate = word(substrate, 1)) %>%
   #clean up
   rename_with(~ str_replace(., "^upc_", "cov_")) %>%
+  #fix relief
+  mutate(relief = ifelse(relief == 730, 30, relief),
+         #apply scalar to relief -- note: relief was estimated in 10cm increments
+         relief_cm = relief*10,
+         #calcualte risk index -- note: risk was estimated in 5cm increments
+         risk_cm = (risk*5) + 141.4, #need to account for diagonal distance
+         risk_index = risk_cm - 141.4 #141.4 is the diagonal distance of the quadrat in cm
+  ) %>%
   ##############################################################################
   # Apply standard site naming
   ##############################################################################
@@ -142,50 +187,69 @@ quad_build_2024 <- quad_raw_2024 %>%
       numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
       # Combine parts with underscore
       paste0(letters, "_", numbers_padded)
-    }))%>%
-  #rename(date_surveyed = survey_date)%>%
-  #get the latest survey date for each site, site_type, zone, and transect by
-  #joining metadata
-  #check what didn't work
-  #fix dates
-  ##############################################################################
-  #join with site table
-  ##############################################################################
-  #join by old site names and site type. These were renamed in 2025
-  left_join(reco_meta_2024, by = c("site" = "site_old", "site_type"="site_type_old", 
-                              "zone", "survey_date"="survey_date_2024")) %>%
-  #drop sites that were resample
-  filter(!is.na(site_official)) %>%
-  #comment out the above to check what didn't match
-  #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
-   #                          "zone", "survey_date"="survey_date_2024"))%>%
-      #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
-      #REC10 FOR Deep, REC10 FOR Shallow, MAC01
-  #clean up
-  #fix relief
-  mutate(relief = ifelse(relief == 730, 30, relief),
-         #apply scalar to relief -- note: relief was estimated in 10cm increments
-         relief_cm = relief*10,
-         #calcualte risk index -- note: risk was estimated in 5cm increments
-         risk_cm = (risk*5) + 141.4, #need to account for diagonal distance
-         risk_index = risk_cm - 141.4 #141.4 is the diagonal distance of the quadrat in cm
-  ) %>%
-  select(-name_of_data_enterer, -site, -site_type, -observer_buddy, -relief,
-         -risk) %>% 
-  select(survey_date, site = site_official, site_type = site_type_official, latitude, 
-         longitude, zone, transect, quadrat, substrate,
-         relief_cm, risk_cm, risk_index, everything()) 
+    })) 
 
-  
-# Result: `quad_build` now contains only records with the latest survey dates
+#separate 2024 and 2025 to do the join, then merge
+reco_meta_2024 <- reco_meta %>% filter(year(survey_date_2024) == 2024)
+
+quad_build_2024 <- quad_build2 %>% filter(year(survey_date) == 2024) %>%
+                      left_join(reco_meta_2024, by = c("site"="site_name_2024", 
+                                                       "site_type" = "site_type_2024",
+                                                       "zone","survey_date"="survey_date_2024")) %>%
+                      #now we must be very careful to adopt the new site names and types
+                      select(survey_type, region, latitude, longitude,
+                             site_official = site_name_2025, site_type_official = site_type_2025,
+                             survey_date, zone, transect, quadrat, relief_cm,
+                             risk_cm, everything()) %>%
+                      select(-latitude_old, -longitude_old, -survey_date_2025, -notes,
+                             relief, risk_index) %>%
+                      # Drop rows where no official site name was found (these were practice sites)
+                      filter(!is.na(site_official)) %>%
+                      # Group and keep only the latest survey per site/year (some sites were resampled)
+                      group_by(
+                        site, site_type, zone
+                      ) %>%
+                      filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
+                      ungroup() %>%
+                      select(-relief, -risk, -name_of_data_enterer, -site, 
+                             -site_type, -observer_buddy, -risk_index)
+                            
+
+
+reco_meta_2025 <- reco_meta %>% filter(year(survey_date_2025) == 2025)
+
+quad_build_2025 <- quad_build2 %>% filter(year(survey_date) == 2025) %>%
+  left_join(reco_meta_2025, by = c("site"="site_name_2025", 
+                                   "site_type" = "site_type_2025",
+                                   "zone","survey_date"="survey_date_2025")) %>%
+  select(-latitude_old, -longitude_old, -notes,
+         relief, risk_index) %>%
+  # Group and keep only the latest survey per site/year (some sites were resampled)
+  group_by(
+    site, site_type, zone
+  ) %>%
+  filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
+  ungroup() %>%
+  select(-relief, -risk, -name_of_data_enterer, 
+         -observer_buddy, -risk_index, -site_name_2024, -site_type_2024, -survey_date_2024) %>%
+  rename(site_official = site, site_type_official = site_type)
+
+
+#join the two dfs together
+ncol(quad_build_2024)
+ncol(quad_build_2025)
+
+quad_build3 <- rbind(quad_build_2024, quad_build_2025) %>%
+                rename(site = site_official, site_type = site_type_official) 
+
 
 #checking
 #check if any instances where conceiled exceeds total counts
-quad_build_2024 %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
-quad_build_2024 %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
+quad_build3 %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
+quad_build3 %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
 
 #check for any duplicate sites
-date_counts <- quad_build_2024 %>%
+date_counts <- quad_build3 %>%
   group_by(site, site_type, zone) %>%
   summarise(num_dates = n_distinct(survey_date), .groups = "drop")
 
@@ -244,8 +308,6 @@ unique(quad_build$quadrat)
 ################################################################################
 #Step 2 - process urchin size data
 
-#inspect
-View(urchin_raw)
 
 #build raw size fq
 urch_build_2024 <- urchin_raw_2024 %>%
@@ -422,6 +484,392 @@ kelp_density_2024 <- kelp_build_2024 %>% filter(species != "MACPYR") %>%
 kelp_build1_2024 <- macro_build1_2024 %>%
   left_join(kelp_density_2024) %>%
   mutate(across(12:19, ~ replace_na(.x, 0)))
+
+
+
+
+
+
+################################################################################
+################################################################################
+################################################################################
+
+#Step 2 - process year == 2025
+
+################################################################################
+################################################################################
+################################################################################
+
+#prep site table for join
+reco_meta_2025 <- reco_meta %>%
+  select(site_official, site_old, site_type_official, site_type_old, zone,
+         latitude, longitude, survey_date_2025)
+
+#Step 1 - process quadrat data
+
+#inspect
+View(quad_raw_2025)
+
+quad_build_2025 <- quad_raw_2025 %>%
+  select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
+  # Set quadrat to numeric by removing R/L
+  mutate(quadrat = str_remove(quadrat, "[RL]$")) %>%
+  # Set column types
+  mutate(
+    name_of_data_enterer = factor(name_of_data_enterer),
+    site = factor(site),
+    site_type = factor(site_type),
+    zone = factor(zone),
+    survey_date = ymd(survey_date),
+    transect = as.numeric(transect),
+    quadrat = as.numeric(quadrat),
+    substrate = factor(substrate)
+  ) %>%
+  ##############################################################################
+# Extrapolate densities for subsamples
+##############################################################################
+#first change NA to 0 --- these are true zeroes
+mutate(across(c(purple_urchins, purple_conceiled, red_urchins, red_conceiled, tegula, pomaulax),
+              ~ replace_na(.x, 0))) %>%
+  #next change subsampled quadrants to 4 if NA --- these are assumed 4
+  mutate(across(c(purple_quadrants_sampled, red_quadrants_sampled, tegula_quadrants_sampled, 
+                  pomaulax_quadrants_sampled),
+                ~ replace_na(.x, 4))) %>%
+  #now apply scalar
+  mutate(
+    purple_urchin_densitym2 = purple_urchins * (4 / purple_quadrants_sampled),
+    purple_urchin_conceiledm2 = purple_conceiled * (4 / purple_quadrants_sampled),
+    red_urchin_densitym2 = red_urchins * (4 / red_quadrants_sampled),
+    red_urchin_conceiledm2 = red_conceiled * (4 / red_quadrants_sampled),
+    tegula_densitym2 = tegula * (4 / tegula_quadrants_sampled),
+    pomaulax_densitym2 = pomaulax * (4 / pomaulax_quadrants_sampled)
+  ) %>%
+  # Drop old columns
+  select(-purple_urchins, -purple_conceiled, -purple_quadrants_sampled,
+         -red_urchins, -red_conceiled, -red_quadrants_sampled,
+         -tegula, -tegula_quadrants_sampled, -pomaulax, -pomaulax_quadrants_sampled) %>%
+  ##############################################################################
+#calculate upc
+##############################################################################
+# Step 1: Convert upc1 through upc8 columns to long format
+pivot_longer(cols = starts_with("upc"), names_to = "upc", values_to = "species") %>%
+  # Remove rows where species is NA (ignoring those UPC points)
+  filter(!is.na(species)) %>%
+  # Group by quadrat and calculate total UPC points per quadrat
+  group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
+           transect, quadrat, substrate) %>%
+  mutate(total_points = n()) %>%  # Calculate total points per quadrat
+  # Calculate percent cover for each species based on the total points that were quantified
+  group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
+           transect, quadrat, substrate, relief, risk, species, 
+           purple_urchin_densitym2, purple_urchin_conceiledm2,
+           red_urchin_densitym2, red_urchin_conceiledm2, 
+           tegula_densitym2, pomaulax_densitym2) %>%
+  summarise(
+    percent_cover = (n() / first(total_points)) * 100,  # Use total points dynamically for each quadrat
+    .groups = 'drop'
+  ) %>%
+  # Step 4: Reshape back to wide format with species as columns, adding 'upc_' prefix
+  pivot_wider(names_from = species, values_from = percent_cover, values_fill = 0,
+              names_prefix = "upc_") %>%
+  # Clean column names and remove any columns with 'na' in the name
+  clean_names() %>%
+  #clean up
+  mutate(substrate = word(substrate, 1)) %>%
+  #clean up
+  rename_with(~ str_replace(., "^upc_", "cov_")) %>%
+  ##############################################################################
+# Apply standard site naming
+##############################################################################
+mutate(
+  # Use a function within str_replace to process each match
+  site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+    # Extract letters and numbers
+    parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+    letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+    numbers <- parts[, 3]
+    # Pad numbers with leading zero
+    numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+    # Combine parts with underscore
+    paste0(letters, "_", numbers_padded)
+  }))%>%
+  #rename(date_surveyed = survey_date)%>%
+  #get the latest survey date for each site, site_type, zone, and transect by
+  #joining metadata
+  #check what didn't work
+  #fix dates
+  ##############################################################################
+#join with site table
+##############################################################################
+#join by old site names and site type. These were renamed in 2025
+left_join(reco_meta_2025, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                 "zone", "survey_date"="survey_date_2025")) %>%
+  #drop sites that were resample
+  filter(!is.na(site_official)) %>%
+  #comment out the above to check what didn't match
+  #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+  #                          "zone", "survey_date"="survey_date_2025"))%>%
+  #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+  #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+  #clean up
+  #fix relief
+  mutate(relief = ifelse(relief == 730, 30, relief),
+         #apply scalar to relief -- note: relief was estimated in 10cm increments
+         relief_cm = relief*10,
+         #calcualte risk index -- note: risk was estimated in 5cm increments
+         risk_cm = (risk*5) + 141.4, #need to account for diagonal distance
+         risk_index = risk_cm - 141.4 #141.4 is the diagonal distance of the quadrat in cm
+  ) %>%
+  select(-name_of_data_enterer, -site, -site_type, -observer_buddy, -relief,
+         -risk) %>% 
+  select(survey_date, site = site_official, site_type = site_type_official, latitude, 
+         longitude, zone, transect, quadrat, substrate,
+         relief_cm, risk_cm, risk_index, everything()) 
+
+
+# Result: `quad_build` now contains only records with the latest survey dates
+
+#checking
+#check if any instances where conceiled exceeds total counts
+quad_build_2025 %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
+quad_build_2025 %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
+
+#check for any duplicate sites
+date_counts <- quad_build_2025 %>%
+  group_by(site, site_type, zone) %>%
+  summarise(num_dates = n_distinct(survey_date), .groups = "drop")
+
+ggplot(date_counts, aes(x = num_dates, y = site, fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~zone) +
+  labs(
+    x = "Number of Unique Survey Dates",
+    y = "Site",
+    title = "Unique Survey Dates per Site, Site Type, and Zone",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
+#check transects
+
+transect_counts <- quad_build_2025 %>%
+  group_by(site, site_type, zone) %>%
+  summarise(num_transects = n_distinct(transect), .groups = "drop")
+
+
+ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~zone) +
+  labs(
+    x = "Number of Unique Transects",
+    y = "Site",
+    title = "Number of Transects per Site, Site Type, and Zone",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
+#check quadrats
+quadrat_counts <- quad_build_2025 %>%
+  group_by(site, site_type, zone, transect) %>%
+  summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
+
+ggplot(quadrat_counts, aes(x = num_quadrats, y = as.factor(transect), fill = site_type)) +
+  geom_col(position = "dodge") +
+  facet_grid(zone ~ site, scales = "free_y") +  # Facet by zone and site
+  labs(
+    x = "Number of Unique Quadrats",
+    y = "Transect",
+    title = "Number of Quadrats per Site, Site Type, Zone, and Transect",
+    fill = "Site Type"
+  ) +
+  theme_minimal()
+
+
+
+################################################################################
+#Step 2 - process urchin size data
+
+
+#build raw size fq
+urch_build_2025 <- urchin_raw_2025 %>%
+  # Remove example first row and classifiers
+  slice(-1) %>%
+  select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
+  # Set column types
+  mutate(
+    name_of_data_enterer = factor(name_of_data_enterer),
+    site = factor(site),
+    site_type = factor(site_type),
+    zone = factor(zone),
+    survey_date = ymd(date),
+    transect = as.numeric(transect),
+    depth = as.numeric(depth),
+    depth_units = factor(depth_units),
+    species = factor(species),
+    size = factor(size),
+    count = as.numeric(count)
+  ) %>%
+  #convert feet to meters
+  mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
+  select(-depth_units, -depth) %>%
+  select(name_of_data_enterer, survey_date, everything()) %>%
+  mutate(size = as.numeric(as.character(size))) %>%
+  rename(size_cm = size) %>%
+  select(-date)%>%
+  ##############################################################################
+# Apply standard site naming
+##############################################################################
+mutate(
+  # Use a function within str_replace to process each match
+  site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
+    # Extract letters and numbers
+    parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+    letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+    numbers <- parts[, 3]
+    # Pad numbers with leading zero
+    numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+    # Combine parts with underscore
+    paste0(letters, "_", numbers_padded)
+  }))%>%
+  #join with site table
+  ##############################################################################
+#join by old site names and site type. These were renamed in 2025
+left_join(reco_meta_2025, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                 "zone", "survey_date"="survey_date_2025")) %>%
+  #drop sites that were resample
+  filter(!is.na(site_official)) %>%
+  #comment out the above to check what didn't match
+  #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+  #                          "zone", "survey_date"="survey_date_2025"))%>%
+  #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+  #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+  #clean up
+  select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
+  select(survey_date, site = site_official, site_type = site_type_official, 
+         latitude, longitude, everything())
+
+
+#sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+#REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
+
+################################################################################
+#Step 3 - process swath data
+
+#inspect
+View(kelp_raw_2025)
+
+#build kelp
+kelp_build_2025 <- kelp_raw_2025 %>%
+  select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
+  # Set column types
+  mutate(
+    name_of_data_enterer = factor(name_of_data_enterer),
+    site = factor(site),
+    site_type = factor(site_type),
+    zone = factor(zone),
+    survey_date = ymd(date),
+    transect = as.numeric(transect),
+    depth = as.numeric(depth),
+    depth_units = factor(depth_units),
+    species = factor(species),
+    count = as.numeric(count)
+  ) %>%
+  #convert feet to meters
+  mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
+  select(-depth_units, -depth, -date) %>%
+  #join with site table
+  ##############################################################################
+#join by old site names and site type. These were renamed in 2025
+left_join(reco_meta_2025, by = c("site" = "site_old", "site_type"="site_type_old", 
+                                 "zone", "survey_date"="survey_date_2025")) %>%
+  #drop sites that were resample
+  #filter(!is.na(site_official)) %>%
+  #comment out the above to check what didn't match
+  #anti_join(reco_meta, by = c("site" = "site_old", "site_type"="site_type_old", 
+  #                          "zone", "survey_date"="survey_date_2025"))%>%
+  #sites dropped: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
+  #REC10 FOR Deep, REC10 FOR Shallow, MAC01
+  #clean up
+  select(-name_of_data_enterer, -site, -site_type, -observer, -buddy) %>% 
+  select(survey_date, site = site_official, site_type = site_type_official, latitude, 
+         longitude, everything())
+
+
+##############################################################################
+#calculate macro density
+##############################################################################
+macro_density_2025 <- kelp_build_2025 %>% filter(species == "MACPYR") %>%
+  #macro is not subsampled
+  select(-subsample_meter, -count) %>%
+  group_by(survey_date, site, site_type, zone, 
+           transect)%>%
+  summarize(n_macro_plants_20m2 = n(),
+            macro_stipe_density_20m2 = mean(stipe_counts_macrocystis_only, na.rm =TRUE),
+            macro_stipe_sd_20m2 = sd(stipe_counts_macrocystis_only, na.rm =TRUE),
+  ) 
+
+#add true zeros
+macro_build1_2025 <- reco_meta_2025 %>%
+  #create list of transects for each site
+  select(site = site_official, site_type = site_type_official, zone, latitude, longitude, 
+         survey_date = survey_date_2025)%>%
+  mutate(transect = list(1:4)) %>%
+  unnest(transect) %>%
+  #add macro
+  left_join(macro_density_2025) %>%
+  mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
+
+##############################################################################
+#calculate density of all other algae.
+#Note:: Macrocystis is not sub-sampled. All other are. We need to create a 
+#scalar to extrapolate counts to the full transect. 
+##############################################################################
+
+#need to create scalar for subsample
+kelp_density_2025 <- kelp_build_2025 %>% filter(species != "MACPYR") %>%
+  select(-stipe_counts_macrocystis_only) %>%
+  #first fix subsample -- note that some observers recorded the transect 
+  #position rather than the meters sampled. If subsample is >10 then it is transect
+  #position, so we need to fix this. 
+  mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
+                                        subsample_meter,
+                                        ifelse(
+                                          subsample_meter >= 10 & subsample_meter <=20, 
+                                          (subsample_meter-10),
+                                          ifelse(
+                                            subsample_meter >= 20 & subsample_meter <=30, 
+                                            (30-subsample_meter),
+                                            subsample_meter
+                                          )
+                                        )),
+         linear_meters_sampled = ifelse(is.na(linear_meters_sampled),
+                                        10,
+                                        linear_meters_sampled
+         ),
+         scalar = 10/linear_meters_sampled,
+         scalar = ifelse(scalar == 0.0, 1, scalar),
+         density_20m2 = count*scalar
+  )%>%
+  select(-linear_meters_sampled, -scalar, -count, -subsample_meter)%>%
+  mutate(species = paste0("density20m2_", species)) %>%
+  # Pivot wider by species
+  pivot_wider(
+    names_from = species, 
+    values_from = density_20m2,
+    values_fill = 0 #replace NA with true 0
+  ) %>% 
+  clean_names() 
+
+
+#join with macro
+kelp_build1_2025 <- macro_build1_2025 %>%
+  left_join(kelp_density_2025) %>%
+  mutate(across(12:19, ~ replace_na(.x, 0)))
+
+
+
 
 ################################################################################
 #join everything
