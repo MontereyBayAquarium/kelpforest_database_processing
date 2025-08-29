@@ -9,6 +9,8 @@
 #steps involved
 
 
+#files to export: quad_build3, urch_build3, kelp_build5
+
 ################################################################################
 
 rm(list=ls())
@@ -267,7 +269,7 @@ ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
 
 
 #check quadrats
-quadrat_counts <- quad_raw_2025 %>%
+quadrat_counts <- quad_raw_2024 %>%
   group_by(site, site_type, zone, transect) %>%
   summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
 
@@ -569,9 +571,27 @@ kelp_build5 <- macro_build3 %>%
 ################################################################################
 #Step 4 - export
 
-write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 7 April 2025
-write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 28 March 2025
-write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 28 March 2025
+#rename
+quad_data <- quad_build3
+urchin_sizefq <- urch_build3
+kelp_data <- kelp_build5
+
+#save to server first
+save(quad_data, urchin_sizefq, kelp_data, file = 
+       "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda") #last write 29 August 2025
+
+#uplaod to google drive
+drive_upload(
+  media = "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda",
+  path = as_id("1nlQtt72vigpL8qroFobFsR5j0nQ_eRZx"),
+  overwrite = TRUE
+) #last write 29 August 2025
+
+
+
+#write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 7 April 2025
+#write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 28 March 2025
+#write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 28 March 2025
 
 
 
