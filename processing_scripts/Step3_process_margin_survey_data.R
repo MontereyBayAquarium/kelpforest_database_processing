@@ -383,7 +383,7 @@ swath_build2 <- swath_build1 %>%
 
 #process macrocystis first -- no subsampling 
 
-mac_build1 <- swath_build1 %>% filter(species == "Macrocystis pyrifera") %>%
+mac_build1 <- swath_build2 %>% filter(species == "Macrocystis pyrifera") %>%
                 select(-subsample_meter) 
                   
 mac_n_plant <- mac_build1 %>% group_by(site, date, transect, segment, species) %>%
@@ -396,46 +396,27 @@ mac_n_plant <- mac_build1 %>% group_by(site, date, transect, segment, species) %
   select(-species)
 
 #process other macroalgae that were subsampled
-algae_build1 <- swath_build1 %>% filter(species != "Macrocystis pyrifera") %>%
-                select(-stipe_counts_macrocystis_only) %>%
-                #4 cases where subsample meter is < 1 m -- change to 1 m because <1 is unrealistic
-                mutate(subsample_meter = ifelse(subsample_meter < 1, 1, subsample_meter)) %>%
-                #convert subsample to estimated total counts
-                mutate(density = count*(5/subsample_meter))%>%
-                #clean up
-                  mutate(
-                    species = trimws(gsub("\\s*\\(.*?\\)", "", species))
-                  ) %>%
-                select(-count) 
-
-###checking
-duplicates <- algae_build1 %>%
-  group_by(site, date, transect, segment, species) %>%
-  filter(n() > 1) %>%
-  ungroup()
-
-# Check if any duplicates exist
-if (nrow(duplicates) > 0) {
-  print("Duplicate segments found within the same site, date, and transect:")
-  print(duplicates)
-} else {
-  print("No duplicate segments found within each site, date, and transect.")
-}
-
-#drop rows that were enterred incorrectly -- checked in raw data by JS
-algae_build2 <- algae_build1 %>%
-  filter(
-    !(site == "MAR_03" & date == as.Date("2024-07-09") & transect == 1 & segment == 55 & species == "Stephanocystis" & density == 4),
-    !(site == "MAR_09" & date == as.Date("2024-07-17") & transect == 3 &  segment== 65 & species == "Stephanocystis" & density == 1),
-    !(site == "MAR_09" & date == as.Date("2024-07-17") & transect == 2 & segment == 70 & species == "Laminaria setchellii" & density == 6),
-    !(site == "MAR_04" & date == as.Date("2024-06-24")& transect == 3 & segment == 70 & species == "Pterygophora" & density == 2)
+algae_build1 <- swath_build2 %>% 
+  filter(species != "Macrocystis pyrifera") %>%
+  select(-stipe_counts_macrocystis_only) %>%
+  mutate(
+    subsample_meter = ifelse(is.na(subsample_meter), 5, subsample_meter),
+    density = count * (5 / subsample_meter),
+    species = trimws(gsub("\\s*\\(.*?\\)", "", species)),
+    species = paste0("den_", species)
   ) %>%
-  #drop columns not needed
-  select(-subsample_meter) %>%
-  #make wider
-  mutate(species = paste0("den_", species)) %>%  # Add "den_" prefix to species names
-  pivot_wider(names_from = species, values_from = density) %>%
-  clean_names() 
+  select(-count, -notes, -subsample_meter) %>%
+  tidyr::pivot_wider(
+    id_cols   = c(site, date, transect, segment),
+    names_from  = species,
+    values_from = density,
+    values_fn   = \(x) sum(x, na.rm = TRUE),
+    values_fill = 0
+  ) %>%
+  janitor::clean_names()
+
+
+
 
 ################################################################################
 #Step 4 - process urchin density
