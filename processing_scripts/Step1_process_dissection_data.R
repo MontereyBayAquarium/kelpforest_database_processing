@@ -16,8 +16,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
 
 #set paths
-datadir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
-datout <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/processed"
+datadir <- datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
 #read urchin data
 urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
@@ -25,9 +24,7 @@ urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXV
 
 #load site tables
 margin_meta <- read_csv(file.path(datadir, "processed/margin_site_table.csv"))
-recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv")) %>%
-  rename(site_type_new = site_type, site_new = site)
-
+recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv")) 
 
 ################################################################################
 
@@ -35,7 +32,7 @@ recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv"
 #Step 1 - process dissection data 
 
 #This is the full cleaned dissection data table. However, the site names are
-#uncorrected. This database in useful for general sea urchin morephometrics
+#uncorrected. This database is useful for general sea urchin morphometrics
 #and date*site is the unique identifier. For pairing data with field survey 
 #data (e.g., margin surveys or recovery surveys), the parsed datasets in the
 #next chunk should be used. 
@@ -104,6 +101,20 @@ gonad_dat_full <- urch_dat_orig %>%
   # Separate site_number into two parts and clean remaining underscores
   separate(site_number, into = c("site_number", "site_type"), sep = "_", remove = FALSE) %>%
   mutate(site_number = gsub("_.*", "", site_number)) %>%
+  # Apply standard site naming
+  mutate(
+    # Use a function within str_replace to process each match
+    site_number = str_replace(site_number, "([A-Za-z]+)([0-9]+)", function(x) {
+      # Extract letters and numbers
+      parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      numbers <- parts[, 3]
+      # Pad numbers with leading zero
+      numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+      # Combine parts with underscore
+      paste0(letters, "_", numbers_padded)
+    })
+  ) %>%
   # Create survey_type column before site_number based on site_number prefix
   mutate(
     survey_type = case_when(
@@ -188,15 +199,17 @@ gonad_dat_full <- urch_dat_orig %>%
     site_number = str_replace(site_number, "^([A-Za-z]{3})([0-9]+)$", "\\1_\\2"),
     zone = as.factor(str_to_sentence(zone))
   ) 
+
+##Warnings ok
   
 
 #check 
-hist(gonad_dat$test_height_mm)
-hist(gonad_dat$test_diameter_mm)
-hist(gonad_dat$animal_24hr_mass_g)
-hist(gonad_dat$gonad_mass_g)
-hist(gonad_dat$soft_tissue_mass_g)
-hist(gonad_dat$gonad_index)
+hist(gonad_dat_full$test_height_mm)
+hist(gonad_dat_full$test_diameter_mm)
+hist(gonad_dat_full$animal_24hr_mass_g)
+hist(gonad_dat_full$gonad_mass_g)
+hist(gonad_dat_full$soft_tissue_mass_g)
+hist(gonad_dat_full$gonad_index)
 
 
 ################################################################################
