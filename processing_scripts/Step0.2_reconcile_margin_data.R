@@ -14,7 +14,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstacksh
 #gs4_auth()
 
 #set dir
-datdir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database"
+datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
 #read original data
 upc_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
@@ -55,7 +55,6 @@ upc_raw_build1 <- upc_raw %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>% #only needed for year == 2024
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   data.frame()%>%
   # Apply standard site naming
@@ -96,7 +95,6 @@ slice(-1) %>% #only needed for year == 2024
 
 
 upc_qc_build1 <- upc_qc %>%
-  slice(-1) %>% 
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   data.frame() %>%
   mutate(
@@ -172,7 +170,8 @@ upc_discrep_values <- upc_raw_build1 %>%
     site, date, heading_out, transect, depth_start, depth_end,
     depth_units, segment, ends_with("_diff")
   ) %>%
-  filter(if_any(ends_with("_diff"), ~ !is.na(.)))
+  filter(if_any(ends_with("_diff"), ~ !is.na(.))) %>%
+  filter(year(date) == 2025)
 
 
 #write csv
@@ -195,7 +194,6 @@ urch_size_raw_build1 <- urchin_size_raw %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
   # Apply standard site naming
   mutate(
@@ -345,7 +343,8 @@ urch_size_discrep_values <- inner_join(
                              if (all(.x == .y)) NA_character_ else paste("Raw counts:", toString(.x), "≠ QC counts:", toString(.y)))
   ) %>%
   # Keep only rows where either sizes or counts differ
-  filter(!is.na(sizes_diff) | !is.na(counts_diff))
+  filter(!is.na(sizes_diff) | !is.na(counts_diff)) %>%
+  filter(year(date) == 2025)
 
 
 
@@ -355,7 +354,7 @@ write_csv(urch_size_discrep_values, temp_file)
 
 drive_upload(
   media = temp_file,
-  path = as_id("1G1JaycgihbplJ2pOED_mXs-895hx4chS"),
+  path = as_id("1_RPnm3UHXVd4wucLD16GQEd3FNbIyWl-"),
   name = "urch_size_discrep_values.csv",
   overwrite = TRUE
 )
@@ -371,7 +370,6 @@ kelp_raw_build1 <- kelp_raw %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
   # Apply standard site naming
   mutate(
@@ -526,7 +524,8 @@ kelp_discrep_values <- inner_join(
                             if (all(.x == .y)) NA_character_ else paste("Raw:", toString(.x), "≠ QC:", toString(.y)))
   ) %>%
   # Keep only groups where either count or stipe values differ
-  filter(!is.na(count_diff) | !is.na(stipe_diff))
+  filter(!is.na(count_diff) | !is.na(stipe_diff)) %>%
+  filter(year(date) == 2025)
 
 
 #write csv
@@ -535,7 +534,7 @@ write_csv(kelp_discrep_values, temp_file)
 
 drive_upload(
   media = temp_file,
-  path = as_id("1G1JaycgihbplJ2pOED_mXs-895hx4chS"),
+  path = as_id("1_RPnm3UHXVd4wucLD16GQEd3FNbIyWl-"),
   name = "kelp_discrep_values.csv",
   overwrite = TRUE
 )
@@ -549,7 +548,6 @@ urch_den_raw_build1 <- urchin_den_raw %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
   select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
   # Apply standard site naming
   mutate(
@@ -615,7 +613,6 @@ urch_den_qc_build1 <- urchin_den_qc %>%
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
   select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
   # Apply standard site naming
   mutate(
@@ -734,7 +731,8 @@ urch_den_discrep_values <- inner_join(
       !is.na(red_density_diff) |
       !is.na(subsample_red_meter_diff) |
       !is.na(red_conceiled_diff)
-  )
+  ) %>%
+  filter(year(date) == 2025)
 
 #write csv
 temp_file <- tempfile(fileext = ".csv")

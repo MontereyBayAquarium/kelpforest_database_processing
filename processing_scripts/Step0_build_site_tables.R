@@ -69,7 +69,7 @@ marge_build1 <- margin_orig %>%
   mutate(survey_type = factor(survey_type),
          region = factor(region),
          site_name_2024 = factor(site_name_2024),
-         site_official = factor(site_name_2025),
+         site_name_2025 = factor(site_name_2025),
          transect = as.numeric(transect),
          heading_out = as.numeric(heading_out),
          target_latitude = as.numeric(target_latitude),
@@ -83,15 +83,25 @@ marge_build1 <- margin_orig %>%
          notes = as.character(notes)
          ) %>%
          #drop sites that were never surveyed or were bad margins
-         filter(!(is.na(site_official))) %>% #sites where in_stack == yes means they were in the raw data
-         select(survey_type, region, site_official, site_name_2024, transect,
+         filter(!(is.na(site_name_2025))) %>% #sites where in_stack == yes means they were in the raw data
+         select(survey_type, region, site_name_2024, site_name_2025, transect,
                 heading_out, target_latitude, target_longitude, actual_latitude,
                 actual_longitude, date_surveyed_originally=date_surveyed, resite_needed, resite_date,
                 notes)%>%
           # Apply standard site naming
           mutate(
             # Use a function within str_replace to process each match
-            site_official = str_replace(site_official, "([A-Za-z]+)([0-9]+)", function(x) {
+            site_name_2024 = str_replace(site_name_2024, "([A-Za-z]+)([0-9]+)", function(x) {
+              # Extract letters and numbers
+              parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
+              letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+              numbers <- parts[, 3]
+              # Pad numbers with leading zero
+              numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
+              # Combine parts with underscore
+              paste0(letters, "_", numbers_padded)
+            }),
+            site_name_2025 = str_replace(site_name_2025, "([A-Za-z]+)([0-9]+)", function(x) {
               # Extract letters and numbers
               parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
               letters <- toupper(parts[, 2])   # Convert to uppercase if needed
@@ -110,7 +120,7 @@ marge_build1 <- margin_orig %>%
                 actual_longitude = coalesce(actual_longitude, target_longitude)) %>%
          #drop columns and rename
          select(-target_latitude, -target_longitude) %>%
-         select(survey_type, region, site_official, site_name_2024, transect, heading_out,
+         select(survey_type, region, site_name_2024, site_name_2025, transect, heading_out,
                 latitude = actual_latitude, longitude = actual_longitude, 
                 survey_date,date_surveyed_originally)
          
@@ -213,7 +223,7 @@ select(survey_type, region,
 ################################################################################
 #Step 3: export
 
-write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 27 Mar 2025
+write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 08 August 2025
 
 write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 13 August 2025
 
