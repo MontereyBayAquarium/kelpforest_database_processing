@@ -13,39 +13,58 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstacksh
 gs4_auth()
 
 #set dir
-datadir <- "/Volumes/seaotterdb$/kelp_recovery/data/MBA_kelp_forest_database/"
+datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
-#read data
-upc_raw <- read_sheet(
-  "https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
+#read reconciled data for 2024
+upc_raw_2024 <- read_sheet(
+  "https://docs.google.com/spreadsheets/d/1Yf9eRnXy2pW4Xx6N8DVy2gKqRVF3e5QlirpSCjVVtqI/edit?gid=0#gid=0",
   sheet = 1, col_types = "c" ) %>% # Set all columns to character type for troubleshooting) 
   clean_names()
 
-urch_size_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
+urch_size_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1Yf9eRnXy2pW4Xx6N8DVy2gKqRVF3e5QlirpSCjVVtqI/edit?gid=0#gid=0",
                          sheet = 2, col_types = "c" ) %>% clean_names()
 
 
-swath_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
+swath_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1Yf9eRnXy2pW4Xx6N8DVy2gKqRVF3e5QlirpSCjVVtqI/edit?gid=0#gid=0",
                        sheet = 3,col_types = "c" ) %>% clean_names()
 
-
-
-urch_den_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1LB_ze2e68ZI7by8-uT1JNsLxEcNZBZF6jEuoWI1xLIU/edit?gid=0#gid=0",
+urch_den_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1Yf9eRnXy2pW4Xx6N8DVy2gKqRVF3e5QlirpSCjVVtqI/edit?gid=0#gid=0",
                        sheet = 4,col_types = "c" ) %>% clean_names()
 
+#read reconciled date for 2025
+upc_raw_2025 <- read_sheet(
+  "https://docs.google.com/spreadsheets/d/17nqbsYx7L1kJ9hBbrU5GtaVjnZ1drI9uCs7adlb5x8g/edit?gid=0#gid=0",
+  sheet = 1, col_types = "c" ) %>% # Set all columns to character type for troubleshooting) 
+  clean_names()
+
+urch_size_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/17nqbsYx7L1kJ9hBbrU5GtaVjnZ1drI9uCs7adlb5x8g/edit?gid=0#gid=0",
+                                 sheet = 3, col_types = "c" ) %>% clean_names()
+
+swath_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/17nqbsYx7L1kJ9hBbrU5GtaVjnZ1drI9uCs7adlb5x8g/edit?gid=0#gid=0",
+                             sheet = 4,col_types = "c" ) %>% clean_names()
+
+urch_den_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/17nqbsYx7L1kJ9hBbrU5GtaVjnZ1drI9uCs7adlb5x8g/edit?gid=0#gid=0",
+                                sheet = 5,col_types = "c" ) %>% clean_names()
+
 #site metdata
-margin_meta <- read_csv(file.path(datadir, "processed/margin_site_table.csv"))
+margin_meta <- read_csv(file.path(datdir, "processed/margin_site_table.csv"))
 
 
 ################################################################################
 #Step 1 - process UPC data
 
-upc_build1 <- upc_raw %>%
+#Step 1 - join 2024 and 2025 data
+
+upc_build1 <- rbind(upc_raw_2024, upc_raw_2025)
+#quickly check that it worked
+nrow(upc_build1)-((nrow(upc_raw_2024)+nrow(upc_raw_2025)))
+
+
+upc_build2 <- upc_build1 %>%
   #########################
   # General tidying
   #########################
   # Remove example first row and classifiers
-  slice(-1) %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
   # Apply standard site naming
   mutate(
@@ -119,7 +138,7 @@ upc_build1 <- upc_raw %>%
 
 
 #Calculate UPC proportions and store in a temporary object
-upc_proportions <- upc_build1 %>%
+upc_proportions <- upc_build2 %>%
   #########################
   # Convert upc columns to long format and filter out NA values
   #########################
@@ -138,7 +157,7 @@ upc_proportions <- upc_build1 %>%
   pivot_wider(names_from = species, values_from = percent_cover, values_fill = 0, names_prefix = "upc_")
 
 #Join the calculated `upc_proportions` data back to `upc_build1`
-upc_build2 <- upc_build1 %>%
+upc_build3 <- upc_build2 %>%
   left_join(upc_proportions, by = c("site", "date", "transect", "segment")) %>%
   select(-upc_1, -upc_2, -upc_3, -upc_4, -upc_5) %>%
   clean_names() %>%
@@ -168,7 +187,7 @@ upc_build2 <- upc_build1 %>%
   data.frame()
 
 ##useful for checking
-nrow(upc_raw) - 1 == nrow(upc_build2)
+nrow(upc_build1) == nrow(upc_build2)
 
 duplicates <- upc_build2 %>%
   group_by(site, date, transect, segment) %>%
@@ -187,13 +206,18 @@ if (nrow(duplicates) > 0) {
 ################################################################################
 #Step 2 - process urchin size data
 
+#join urchin size
 
-urch_size_build1 <- urch_size_raw %>%
+urch_size_build1 <- rbind(urch_size_raw_2024, urch_size_raw_2025)
+
+#quickly check that it worked
+nrow(urch_size_build1)-((nrow(urch_size_raw_2024)+nrow(urch_size_raw_2025)))
+
+
+urch_size_build2 <- urch_size_build1 %>%
   #########################
   # General tidying
   #########################
-  # Remove example first row and classifiers
-  slice(-1) %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
   # Apply standard site naming
   mutate(
@@ -261,7 +285,8 @@ urch_size_build1 <- urch_size_raw %>%
   data.frame()
 
 #prepare df for join 
-urch_size_build2 <- urch_size_build1 %>%
+urch_size_build3 <- urch_size_build2 %>%
+                    filter(!is.na(count))%>%
                     select(-heading_out, -observer, -buddy, -depth_start,
                            -depth_end) %>%
                     #make long format
@@ -278,12 +303,19 @@ urch_size_build2 <- urch_size_build1 %>%
 ################################################################################
 #Step 3 - process kelp swath
 
-swath_build1 <- swath_raw %>%
+#join swath
+
+swath_build1 <- rbind(swath_raw_2024, swath_raw_2025)
+
+#quickly check that it worked
+nrow(swath_build1)-((nrow(swath_raw_2024)+nrow(swath_raw_2025)))
+
+
+swath_build2 <- swath_build1 %>%
   #########################
 # General tidying
 #########################
 # Remove example first row and classifiers
-slice(-1) %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
   # Apply standard site naming
   mutate(
@@ -352,9 +384,11 @@ slice(-1) %>%
 #process macrocystis first -- no subsampling 
 
 mac_build1 <- swath_build1 %>% filter(species == "Macrocystis pyrifera") %>%
-                select(-subsample_meter)
-
+                select(-subsample_meter) 
+                  
 mac_n_plant <- mac_build1 %>% group_by(site, date, transect, segment, species) %>%
+                mutate(stipe_counts_macrocystis_only = as.numeric(stipe_counts_macrocystis_only),
+                       count = as.numeric(count))%>%
                summarize(n_macro_plants = n(),
                          avg_macro_stipe_density = mean(stipe_counts_macrocystis_only, na.rm=TRUE),
                          sd_macro_stipe = sd(stipe_counts_macrocystis_only, na.rm=TRUE)) %>%
