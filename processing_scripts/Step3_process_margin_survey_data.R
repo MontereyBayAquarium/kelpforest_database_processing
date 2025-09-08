@@ -421,12 +421,17 @@ algae_build1 <- swath_build2 %>%
 ################################################################################
 #Step 4 - process urchin density
 
-urch_den_build1 <- urch_den_raw %>%
+
+urch_den_build1 <- rbind(urch_den_raw_2024, urch_den_raw_2025)
+
+#quickly check that it worked
+nrow(urch_den_build1)-((nrow(urch_den_raw_2024)+nrow(urch_den_raw_2025)))
+
+urch_den_build2 <- urch_den_build1 %>%
   #########################
     # General tidying
     #########################
     # Remove example first row and classifiers
-    slice(-1) %>%
     select(-windows_ctrl_alt_shift_7_mac_command_option_shift_7) %>%
     # Apply standard site naming
   mutate(
@@ -507,28 +512,28 @@ urch_den_build1 <- urch_den_raw %>%
   )) %>%
   #drop field that are not needed
   select(-depth_start, -depth_end, -observer, -buddy, -name_of_data_enterer,
-         -heading_out)
+         -heading_out, -notes)
 
   
 
 
 #check
-any(urch_den_build1$purple_urchin_conceiled_density > urch_den_build1$purple_urchin_density)
-any(urch_den_build1$red_urchin_conceiled_density > urch_den_build1$red_urchin_density)
+any(urch_den_build2$purple_urchin_conceiled_density > urch_den_build2$purple_urchin_density)
+any(urch_den_build2$red_urchin_conceiled_density > urch_den_build2$red_urchin_density)
 
 
 ################################################################################
 #join everything
 
-#for join: upc_build2, urch_size_build1, mac_n_plant, algae_build2, urch_den_build1
+#for join: upc_build3, urch_size_build3, mac_n_plant, algae_build1, urch_den_build2
 
 
-#upc_build2 is the base df with complete segments
-sapply(upc_build2[, c("site","date","transect","segment")], class)
+#upc_build3 is the base df with complete segments
+sapply(upc_build3[, c("site","date","transect","segment")], class)
 sapply(mac_n_plant[, c("site","date","transect","segment")], class)
 
 
-margin_join1 <- left_join(upc_build2, mac_n_plant, by = c("site","date","transect",
+margin_join1 <- left_join(upc_build3, mac_n_plant, by = c("site","date","transect",
                                                           "segment")) %>%
                 #replace NAs with true zeros
                   mutate(
@@ -537,7 +542,7 @@ margin_join1 <- left_join(upc_build2, mac_n_plant, by = c("site","date","transec
                     sd_macro_stipe = replace_na(sd_macro_stipe, 0)
                   )
 
-margin_join2 <- left_join(margin_join1, algae_build2, by = c("site","date","transect",
+margin_join2 <- left_join(margin_join1, algae_build1, by = c("site","date","transect",
                                                              "segment")) %>%
                   #replace NAs with true zeros
                   mutate(
@@ -550,7 +555,7 @@ margin_join2 <- left_join(margin_join1, algae_build2, by = c("site","date","tran
                     den_lam_stump = replace_na(den_lam_stump,0)
                   )
 
-margin_join3 <- left_join(margin_join2, urch_den_build1, by = c("site","date","transect",
+margin_join3 <- left_join(margin_join2, urch_den_build2, by = c("site","date","transect",
                                                                 "segment")) %>%
                   #clean names to match scheme
                   rename(den_purple_urchin = purple_urchin_density,
@@ -558,17 +563,53 @@ margin_join3 <- left_join(margin_join2, urch_den_build1, by = c("site","date","t
                          den_purple_conceiled = purple_urchin_conceiled_density,
                          den_red_conceiled = red_urchin_conceiled_density)
 
-margin_join4 <- left_join(margin_join3, urch_size_build2, by = c("site","date","transect",
+margin_join4 <- left_join(margin_join3, urch_size_build3, by = c("site","date","transect",
                                                                  "segment")) 
 
+nrow(upc_build3) == nrow(margin_join4)
+
+################################################################################
+#update official site names and metadata
+
+margin_2024 <- margin_join4 %>%
+                filter(year(date) == 2024) %>%
+                left_join(., margin_meta, by = c("site" = "site_name_2024",
+                                                 "date" = "survey_date",
+                                                 "transect"
+                                                 )) %>%
+                  #keep only the most recent durvey date
+                  filter(!is.na(date_surveyed_originally)) %>%
+                select(-name_of_data_enterer, -heading_out.x, -notes, 
+                       -sz_mean_na, -sz_sd_na, -date_surveyed_originally)%>%
+                rename(site_official = site_name_2025) %>%
+                select(-site, -observer, -buddy)%>%
+                select(survey_type, region, site = site_official, latitude, 
+                       longitude, date, transect, heading = heading_out.y, 
+                       depth_start, depth_end, segment, everything())
+
+colnames(margin_2024)
+
+margin_2025 <- margin_join4 %>%
+  filter(year(date) == 2025) %>%
+  left_join(., margin_meta, by = c("site" = "site_name_2025",
+                                   "transect"
+  )) %>%
+  #keep only the most recent durvey date
+  filter(!is.na(date_surveyed_originally)) %>%
+  select(-name_of_data_enterer, -heading_out.x, -notes, 
+         -sz_mean_na, -sz_sd_na, -date_surveyed_originally)%>%
+  select(-observer, -buddy, -site_name_2024, -survey_date)%>%
+  select(survey_type, region, site, latitude, 
+         longitude, date, transect, heading = heading_out.y, 
+         depth_start, depth_end, segment, everything())
+
+margin_merge <- rbind(margin_2024, margin_2025)
 
 
 ################################################################################
 #export
 
 write_csv(urch_size_build1, file.path(datadir, "processed/margin_urchin_size_fq.csv")) #last write 5 Nov 2024
-
-
 write_csv(margin_join4, file.path(datadir, "processed/margin_combined_data.csv")) #last write 5 Nov 2024
 
 
