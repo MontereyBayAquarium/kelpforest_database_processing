@@ -216,7 +216,14 @@ hist(gonad_dat_full$gonad_index)
 #Step 2 - parse data for recovery surveys -- correct site names and filter 
 #for join
 
-gonad_dat_recovery <- gonad_dat_full %>%
+gonad_dat_recovery_2024 <- gonad_dat_full %>%
+  filter(survey_type == "Recovery") %>%
+  filter(year(date_collected) == 2024) %>%
+  left_join(., recovery_meta, by = c("date_collected" = "survey_date_2024",
+                                     "site_number" = "site_name_2024",
+                                     "site_type" = "site_type_2024",
+                                     "zone"))
+  
   #join recovery site table
   #NOTE: NAs in 'site_new' are because the site was sampled twice. These can 
   #get dropped later if merging with full databse. 
