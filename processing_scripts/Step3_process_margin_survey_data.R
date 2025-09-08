@@ -610,7 +610,7 @@ margin_merge <- rbind(margin_2024, margin_2025)
 #export
 
 write_csv(urch_size_build1, file.path(datadir, "processed/margin_urchin_size_fq.csv")) #last write 5 Nov 2024
-write_csv(margin_join4, file.path(datadir, "processed/margin_combined_data.csv")) #last write 5 Nov 2024
+write_csv(margin_merge, file.path(datdir, "processed/margin_combined_data.csv")) #last write 8 August 2025
 
 
 
