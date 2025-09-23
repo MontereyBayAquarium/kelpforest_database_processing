@@ -1,0 +1,8 @@
+site_number,transect,date_processed,species,sample_number,sex_raw_diff,test_height_mm_raw_diff,test_diameter_mm_raw_diff,animal_wet_mass_g_raw_diff,gonad_mass_g_raw_diff,resolved
+REC05_BAR,SHALLOW,2025-06-10,purple_urchin,14,NA,NA,NA,NA,2.216 ≠ 20216,
+REC05_BAR,DEEP,2025-06-10,purple_urchin,3,NA,NA,NA,NA,1.314 ≠ 1.341,
+REC05_BAR,DEEP,2025-06-10,purple_urchin,22,NA,21.56 ≠ 21.86,NA,NA,NA,
+REC04_INCIP,SHALLOW,2025-06-11,purple_urchin,9,NA,NA,NA,NA,1.7077 ≠ 1.708,
+REC04_INCIP,SHALLOW,2025-06-11,purple_urchin,13,NA,14.88 ≠ 14.86,NA,NA,NA,
+REC04_INCIP,SHALLOW,2025-06-11,purple_urchin,15,NA,14.47 ≠ 14.74,NA,NA,NA,
+REC04_INCIP,SHALLOW,2025-06-11,purple_urchin,17,NA,NA,29.74 ≠ 27.74,NA,NA,

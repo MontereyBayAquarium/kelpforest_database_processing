@@ -22,6 +22,8 @@ datadir <- datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_databa
 urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
   clean_names()
 
+#Redirect to reconciled data after it has been processed
+
 #load site tables
 margin_meta <- read_csv(file.path(datadir, "processed/margin_site_table.csv"))
 recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv")) 
@@ -96,6 +98,7 @@ gonad_dat_full <- urch_dat_orig %>%
     site_number == "REC05=BAR" ~ "REC05_BAR",
     site_number == "REC05_INCID" ~ "REC05_INCIP",
     site_number == "REC0_INCIP" ~ "REC01_INCIP",
+    site_number == "RECO5_FOR" ~ "REC05_FOR",
     TRUE ~ site_number  # Keep the original value if no condition matches
   )) %>%
   # Separate site_number into two parts and clean remaining underscores
@@ -203,18 +206,12 @@ gonad_dat_full <- urch_dat_orig %>%
 ##Warnings ok
   
 
-#check 
-hist(gonad_dat_full$test_height_mm)
-hist(gonad_dat_full$test_diameter_mm)
-hist(gonad_dat_full$animal_24hr_mass_g)
-hist(gonad_dat_full$gonad_mass_g)
-hist(gonad_dat_full$soft_tissue_mass_g)
-hist(gonad_dat_full$gonad_index)
-
-
 ################################################################################
 #Step 2 - parse data for recovery surveys -- correct site names and filter 
 #for join
+
+#Step 3 - separate 2024 and 2025 to do the site table join, then merge
+reco_meta_2024 <- recovery_meta %>% filter(year(survey_date_2024) == 2024)
 
 gonad_dat_recovery_2024 <- gonad_dat_full %>%
   filter(survey_type == "Recovery") %>%
@@ -222,20 +219,58 @@ gonad_dat_recovery_2024 <- gonad_dat_full %>%
   left_join(., recovery_meta, by = c("date_collected" = "survey_date_2024",
                                      "site_number" = "site_name_2024",
                                      "site_type" = "site_type_2024",
-                                     "zone"))
-  
-  #join recovery site table
-  #NOTE: NAs in 'site_new' are because the site was sampled twice. These can 
-  #get dropped later if merging with full databse. 
-  left_join(., recovery_meta, by= c("survey_type","date_collected" = "survey_date_2024",
-                                    "site_number" = "site_old", "site_type" = "site_type_old",
-                                    "zone" = "zone")) %>%
-  filter(survey_type == "Recovery",
-         !(is.na(site_new))) %>%
-  select(date_collected, date_fixed, survey_type, site = site_new,
-         site_type = site_type_new, zone, species, sex, test_height_mm,
-         test_diameter_mm, animal_24hr_mass_g, sample_number, gonad_index,
-         latitude, longitude)
+                                     "zone"))%>%
+  select(-survey_type.y)%>%
+  #now we must be very careful to adopt the new site names and types
+  dplyr::select(survey_type = survey_type.x, region, latitude, longitude,
+         site_official = site_name_2025, site_type_official = site_type_2025,
+         survey_date = date_collected, zone, transect, everything()) %>%
+  #Note: NA in site_official can get dropped because the site was resampled
+  filter(!is.na(site_official))%>%
+  select(-transect, -soft_tissue_mass_g, -notes, -latitude_old, -longitude_old,
+         -survey_date_2025, -site_type, -site_number) %>%
+  # Group and keep only the latest survey per site/year (some sites were resampled)
+  group_by(
+    site_official, site_type_official, zone
+  ) %>%
+  filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
+  ungroup() 
+
+
+gonad_dat_recovery_2025 <- gonad_dat_full %>%
+  filter(survey_type == "Recovery") %>%
+  filter(year(date_collected) == 2025) %>%
+  left_join(., recovery_meta, by = c("date_collected" = "survey_date_2025",
+                                     "site_number" = "site_name_2025",
+                                     "site_type" = "site_type_2025",
+                                     "zone"))%>%
+  select(-survey_type.y)%>%
+  #now we must be very careful to adopt the new site names and types
+  dplyr::select(survey_type = survey_type.x, region, latitude, longitude,
+                site_official = site_number, site_type_official = site_type,
+                survey_date = date_collected, zone, transect, everything()) %>%
+  #Note: NA in site_official can get dropped because the site was resampled
+  filter(!is.na(site_official))%>%
+  select(-transect, -soft_tissue_mass_g, -notes, -latitude_old, -longitude_old,
+         -site_name_2024, -site_type_2024, -survey_date_2024) %>%
+  # Group and keep only the latest survey per site/year (some sites were resampled)
+  group_by(
+    site_official, site_type_official, zone
+  ) %>%
+  filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
+  ungroup() 
+
+gonad_recovery_join <- rbind(gonad_dat_recovery_2024, gonad_dat_recovery_2025)
+
+
+
+#check 
+nrow(gonad_recovery_join)
+hist(gonad_recovery_join$test_height_mm)
+hist(gonad_recovery_join$test_diameter_mm)
+hist(gonad_recovery_join$animal_24hr_mass_g)
+hist(gonad_recovery_join$gonad_mass_g)
+hist(gonad_recovery_join$gonad_index)
 
 
 ################################################################################
