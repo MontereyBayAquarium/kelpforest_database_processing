@@ -187,7 +187,7 @@ quad_build_2025 <- quad_build2 %>% filter(year(survey_date) == 2025) %>%
   left_join(reco_meta_2025, by = c("site"="site_name_2025", 
                                    "site_type" = "site_type_2025",
                                    "zone","survey_date"="survey_date_2025")) %>%
-  select(-latitude_old, -longitude_old, -notes,
+select(-latitude_old, -longitude_old, -notes,
          -relief, risk_cm) %>%
   # Group and keep only the latest survey per site/year (some sites were resampled)
   group_by(
