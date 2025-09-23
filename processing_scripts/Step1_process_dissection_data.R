@@ -16,7 +16,7 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
 
 #set paths
-datadir <- datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
+datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
 #read urchin data
 urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
@@ -99,6 +99,15 @@ gonad_dat_full <- urch_dat_orig %>%
     site_number == "REC05_INCID" ~ "REC05_INCIP",
     site_number == "REC0_INCIP" ~ "REC01_INCIP",
     site_number == "RECO5_FOR" ~ "REC05_FOR",
+    site_number == "REC_11FOR" ~ "REC11_FOR",
+    site_number == "REC_11FOR" ~ "REC11_FOR",
+    site_number == "REC02BAR" ~ "REC02_BAR",
+    site_number == "REC5=BAR" ~ "REC05_BAR",
+    site_number == "REC02INCIP" ~ "REC02_INCIP",
+    site_number == "REC11FOR" ~ "REC11_FOR",
+    site_number == "REC01BAR" ~ "REC01_BAR",
+    site_number == "REC02FOR" ~ "REC02_FOR",
+    site_number == "REC01INCIP" ~ "REC01_INCIP",
     TRUE ~ site_number  # Keep the original value if no condition matches
   )) %>%
   # Separate site_number into two parts and clean remaining underscores
@@ -293,7 +302,7 @@ gonad_dat_margin <- gonad_dat_full %>%
 #export
 
 write_csv(gonad_dat_full, file.path(datout, "dissection_data_cleaned.csv")) #last write 1 April 2025
-write_csv(gonad_dat_recovery, file.path(datout, "dissection_data_recovery.csv")) #last write 1 April 2025
+write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissection_data_recovery.csv")) #last write 23 Sept 2025
 write_csv(gonad_dat_margin, file.path(datout, "dissection_data_margin.csv")) #last write 1 April 2025
 
 
