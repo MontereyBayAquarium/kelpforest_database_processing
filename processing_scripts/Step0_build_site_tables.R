@@ -192,8 +192,8 @@ reco_build1 <- recovery_orig %>%
   #drop columns and rename
 select(survey_type, region, 
        #official site name and type becomes the 2025 designation
-       site_official = site_name_2025, site_type_official = site_type_2025,
-       site_old = site_name_2024, site_type_old = site_type_2024, zone = transect,
+       site_name_2025, site_type_2025,
+       site_name_2024, site_type_2024, zone = transect,
            latitude = new_latitude, longitude = new_longitude, latitude_old = old_latitude,
        longitude_old = old_longitude, 
        #official 2024 survey date is the most recent date for that year
@@ -206,10 +206,8 @@ select(survey_type, region,
   mutate(
     survey_type = factor(survey_type),
     region = factor(region),
-    site_official = factor(site_official),
-    site_type_fficial = factor(site_type_official),
-    site_old = factor(site_old),
-    site_type_old = factor(site_type_old),
+    site_type_2025 = factor(site_type_2025),
+    site_type_2024 = factor(site_type_2024),
     zone = factor(zone),
   )
 
@@ -225,6 +223,6 @@ select(survey_type, region,
 
 write_csv(marge_build1, file.path(datout, "margin_site_table.csv")) #last write 08 August 2025
 
-write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 13 August 2025
+write_csv(reco_build1, file.path(datout, "recovery_site_table.csv")) #last write 25 Sept 2025
 
 

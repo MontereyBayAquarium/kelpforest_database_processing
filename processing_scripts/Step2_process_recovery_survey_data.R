@@ -581,11 +581,11 @@ save(quad_data, urchin_sizefq, kelp_data, file =
        "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda") #last write 29 August 2025
 
 #uplaod to google drive
-drive_upload(
-  media = "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda",
-  path = as_id("1nlQtt72vigpL8qroFobFsR5j0nQ_eRZx"),
-  overwrite = TRUE
-) #last write 29 August 2025
+#drive_upload(
+#  media = "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda",
+#  path = as_id("1nlQtt72vigpL8qroFobFsR5j0nQ_eRZx"),
+#  overwrite = TRUE
+#) #last write 29 August 2025
 
 
 
