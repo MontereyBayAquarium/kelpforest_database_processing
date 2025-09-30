@@ -578,7 +578,7 @@ kelp_data <- kelp_build5
 
 #save to server first
 save(quad_data, urchin_sizefq, kelp_data, file = 
-       "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda") #last write 29 August 2025
+       "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda") #last write 30 Sept 2025
 
 #uplaod to google drive
 #drive_upload(
