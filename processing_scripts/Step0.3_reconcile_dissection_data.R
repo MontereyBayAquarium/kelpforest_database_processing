@@ -17,7 +17,7 @@
 rm(list=ls())
 
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstackshape,
-                 googledrive)
+                 googledrive, stringr)
 #gs4_auth()
 
 #set dir
@@ -29,7 +29,7 @@ dissection_raw <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfX
 
 
 #read QAQC data
-dissection_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1AKtFuqp8rv5fVtKdRygMxJeNG9rz1GCRn5zjR596MGI/edit?gid=0#gid=0",
+dissection_qc <- read_sheet("https://docs.google.com/spreadsheets/d/1JokIivixTaecVwtY7fIYhn41yvP7ZrzeZ3YJ-LXDNE0/edit?gid=0#gid=0",
                       sheet = 1) %>% clean_names()
 
 
@@ -40,13 +40,15 @@ dissection_raw_build1 <- dissection_raw %>%
   mutate(
     institution = as.factor(institution),
     name_of_data_enterer = as.character(name_of_data_enterer),
-    date_collected = ymd(date_collected),
-    date_fixed = ymd(date_fixed),
-    date_processed = ymd(date_processed),
-    site_number = as.factor(site_number),
+    # normalize dates (handles "-" or "/")
+    date_collected = parse_date_time(date_collected, orders = c("ymd", "Y/m/d", "m/d/Y")),
+    date_fixed     = parse_date_time(date_fixed,     orders = c("ymd", "Y/m/d", "m/d/Y")),
+    date_processed = parse_date_time(date_processed, orders = c("ymd", "Y/m/d", "m/d/Y")),
+    
+    site_number = as.character(site_number),
     transect = as.character(transect),
     treatment = as.factor(treatment),
-    sex = as.factor(sex),
+    sex = tolower(as.character(sex)),   # normalize to lower case
     test_height_mm = as.numeric(test_height_mm),
     test_diameter_mm = as.numeric(test_diameter_mm),
     animal_wet_mass_g = as.numeric(animal_wet_mass_g),
@@ -56,27 +58,30 @@ dissection_raw_build1 <- dissection_raw %>%
     notes = as.character(notes),
     date_entered = ymd_hms(date_entered)
   ) %>%
-  # clean site names
+  # clean site names consistently
   mutate(
-    site_number = gsub("-", "_", site_number),
-    site_number = gsub("REC_", "REC", site_number),
-    site_number = gsub("MAR_", "MAR", site_number)
+    site_number = str_replace_all(site_number, "-", "_"),
+    site_number = str_replace(site_number, "^REC_", "REC"),
+    site_number = str_replace(site_number, "^MAR_", "MAR")
   ) %>%
   # remove leading zeros from sample_number
   mutate(sample_number = sub("^0+", "", as.character(sample_number))) %>%
-  select(-institution, -name_of_data_enterer, -notes)
+  select(-institution, -name_of_data_enterer, -notes) 
+
 
 dissection_qc_build1 <- dissection_qc %>%
   mutate(
     institution = as.factor(institution),
     name_of_data_enterer = as.character(name_of_data_enterer),
-    date_collected = ymd(date_collected),
-    date_fixed = ymd(date_fixed),
-    date_processed = ymd(date_processed),
-    site_number = as.factor(site_number),
+    # normalize dates (handles "-" or "/")
+    date_collected = parse_date_time(date_collected, orders = c("ymd", "Y/m/d", "m/d/Y")),
+    date_fixed     = parse_date_time(date_fixed,     orders = c("ymd", "Y/m/d", "m/d/Y")),
+    date_processed = parse_date_time(date_processed, orders = c("ymd", "Y/m/d", "m/d/Y")),
+    
+    site_number = as.character(site_number),
     transect = as.character(transect),
     treatment = as.factor(treatment),
-    sex = as.factor(sex),
+    sex = tolower(as.character(sex)),   # normalize to lower case
     test_height_mm = as.numeric(test_height_mm),
     test_diameter_mm = as.numeric(test_diameter_mm),
     animal_wet_mass_g = as.numeric(animal_wet_mass_g),
@@ -86,14 +91,18 @@ dissection_qc_build1 <- dissection_qc %>%
     notes = as.character(notes),
     date_entered = ymd_hms(date_entered)
   ) %>%
+  # clean site names consistently
+  mutate(
+    site_number = str_replace_all(site_number, "-", "_"),
+    site_number = str_replace(site_number, "^REC_", "REC"),
+    site_number = str_replace(site_number, "^MAR_", "MAR")
+  ) %>%
+  # remove leading zeros from sample_number
   mutate(sample_number = sub("^0+", "", as.character(sample_number))) %>%
   select(-institution, -name_of_data_enterer, -notes)
 
 
 
-library(dplyr)
-library(stringr)
-library(lubridate)
 
 library(dplyr)
 library(stringr)
@@ -176,7 +185,6 @@ write_csv(dissection_discrep_values, dissection_file)
 
 #2025 upload
 drive_upload(dissection_file, path = as_id("1WWnvFwSsM8ZQgGCdwsXVG9abg49WM5eA"), overwrite = TRUE)
-
 
 
 
