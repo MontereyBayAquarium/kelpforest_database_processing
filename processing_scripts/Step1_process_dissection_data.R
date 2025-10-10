@@ -16,11 +16,15 @@ librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate)
 gs4_auth()
 
 #set paths
-datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
+datadir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
 #read urchin data
-urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
-  clean_names()
+#urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1Ih-hBXRtfXVMdxw5ibZnXy_dZErdcx5FfeKMSc0HEc4/edit?gid=0#gid=0") %>%
+ # clean_names() #original entry
+
+urch_dat_orig <- read_sheet("https://docs.google.com/spreadsheets/d/1qbFjGnOgWMeWUTJqBor0xeP0z-RHo6LiFzybS7DLcF4/edit?gid=0#gid=0") %>%
+ clean_names() #QA/QC data
+
 
 #Redirect to reconciled data after it has been processed
 
@@ -40,6 +44,7 @@ recovery_meta <- read_csv(file.path(datadir, "processed/recovery_site_table.csv"
 #next chunk should be used. 
 
 gonad_dat_full <- urch_dat_orig %>%
+  data.frame()%>%
   # Replace missing values and clean up variables
   mutate(
     institution = as.factor(institution),
@@ -48,7 +53,7 @@ gonad_dat_full <- urch_dat_orig %>%
     date_fixed = ymd(date_fixed),
     date_processed = ymd(date_processed),
     site_number = as.factor(site_number),
-    transect = as.factor(transect),
+    transect = as.factor(as.character(transect)),
     treatment = as.factor(treatment),
     sex = as.factor(sex),
     test_height_mm = as.numeric(test_height_mm),
@@ -292,8 +297,8 @@ gonad_dat_margin <- gonad_dat_full %>%
   left_join(., margin_meta, by= c("survey_type","date_collected" = "survey_date",
                                   "transect",
                                     "site_number" = "site_name_2024")) %>%
-  filter(!(is.na(site_official))) %>%
-  select(survey_type, date_collected, date_fixed, site = site_official,
+  filter(!(is.na(site_number))) %>%
+  select(survey_type, date_collected, date_fixed, site = site_number,
          transect, heading_out, latitude, longitude, species, sample_number, sex, test_height_mm,
          test_diameter_mm, animal_24hr_mass_g, gonad_mass_g, gonad_index)
 
@@ -301,8 +306,8 @@ gonad_dat_margin <- gonad_dat_full %>%
 ################################################################################
 #export
 
-write_csv(gonad_dat_full, file.path(datout, "dissection_data_cleaned.csv")) #last write 1 April 2025
-write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissection_data_recovery.csv")) #last write 23 Sept 2025
+write_csv(gonad_dat_full, file.path(datadir, "/processed/dissection/dissection_data_cleanedv2.csv")) #last write 10 October 2025
+write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissection_data_recovery.csv")) #last write 10 Oct 2025
 write_csv(gonad_dat_margin, file.path(datout, "dissection_data_margin.csv")) #last write 1 April 2025
 
 
