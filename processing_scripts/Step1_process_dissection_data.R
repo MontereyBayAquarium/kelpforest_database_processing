@@ -274,8 +274,25 @@ gonad_dat_recovery_2025 <- gonad_dat_full %>%
   filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
   ungroup() 
 
-gonad_recovery_join <- rbind(gonad_dat_recovery_2024, gonad_dat_recovery_2025)
-
+gonad_recovery_join <- rbind(gonad_dat_recovery_2024, gonad_dat_recovery_2025) %>%
+                        #tidy
+                        #fix species names
+                        mutate(
+                          species = str_to_lower(str_trim(species)),
+                          species = case_when(
+                            str_detect(species, "red") ~ "red_urchin",
+                            str_detect(species, "pur") ~ "purple_urchin",
+                            TRUE ~ species
+                          )) %>%
+                        #fix missing species (confirmed from raw data)
+                        mutate(
+                          species = case_when(
+                            site_official == "REC_04" &
+                              zone == "Shallow" &
+                              year(survey_date) == 2024 ~ "purple_urchin",
+                            TRUE ~ species
+                          )
+                        )
 
 
 #check 
@@ -307,7 +324,7 @@ gonad_dat_margin <- gonad_dat_full %>%
 #export
 
 write_csv(gonad_dat_full, file.path(datadir, "/processed/dissection/dissection_data_cleanedv2.csv")) #last write 10 October 2025
-write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissection_data_recovery.csv")) #last write 10 Oct 2025
+write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissection_data_recovery.csv")) #last write 16 Oct 2025
 write_csv(gonad_dat_margin, file.path(datout, "dissection_data_margin.csv")) #last write 1 April 2025
 
 
