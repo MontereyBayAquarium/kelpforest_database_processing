@@ -328,6 +328,19 @@ write_csv(gonad_recovery_join, file.path(datadir, "/processed/dissection/dissect
 write_csv(gonad_dat_margin, file.path(datout, "dissection_data_margin.csv")) #last write 1 April 2025
 
 
+#export filtered data for Gabi
+gonad_dat_margin_2025 <- gonad_dat_margin |>
+  dplyr::filter(
+    date_collected >= as.Date("2025-01-01"),
+    date_collected <  as.Date("2026-01-01")
+  ) %>%
+  dplyr::select(-heading_out, -latitude, -longitude)
+
+
+readr::write_csv(
+  gonad_dat_margin_2025,
+  here::here("dissection_data", "gonad_dat_margin_2025.csv")
+)
 
 
 
