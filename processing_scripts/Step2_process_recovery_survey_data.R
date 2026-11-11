@@ -1,27 +1,26 @@
 
 
 ################################################################################
-# About
-# data processing script written by JG.Smith jossmith@mbayaq.org
+# Recovery survey data processing
+#
+# Combines and processes reconciled 2024 and 2025 survey data.
+# Final objects: quad_data, urchin_sizefq, and kelp_data.
+# Original script author: JG.Smith (jossmith@mbayaq.org)
 
 
-################################################################################
-#steps involved
 
-
-#files to export: quad_build3, urch_build3, kelp_build5
-
-################################################################################
-
+# Start with a clean R session.
 rm(list=ls())
 
+# Load packages used throughout the processing steps.
 librarian::shelf(tidyverse,here, janitor, googlesheets4, lubridate, splitstackshape)
+# Uncomment if Google Sheets authentication is needed for the source sheets.
 #gs4_auth()
 
-#set dir
+# Root directory containing the recovery data and processed outputs.
 datdir <- "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database"
 
-#read reconciled data for 2024
+# Read reconciled quadrat, urchin, and kelp data for 2024.
 quad_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4sb5t5wqi1eVZL1Zby7G34vFZ1U7sNFm50/edit?gid=0#gid=0",
                        sheet = 1) %>% clean_names()
 
@@ -33,7 +32,7 @@ kelp_raw_2024 <- read_sheet("https://docs.google.com/spreadsheets/d/1obf0FTO-w4s
                        sheet = 3) %>% clean_names()
 
 
-#read reconciled data for 2025
+# Read reconciled quadrat, urchin, and kelp data for 2025.
 quad_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/1CDyHJqlKW5uRpg2Y9a7cfW5_a-5n_OkGv_RbiEKGDnA/edit?gid=0#gid=0",
                             sheet = 1) %>% clean_names()
 
@@ -45,27 +44,27 @@ kelp_raw_2025 <- read_sheet("https://docs.google.com/spreadsheets/d/1CDyHJqlKW5u
                             sheet = 4) %>% clean_names()
 
 
-#read site table
+# Read site metadata used to standardize survey records.
 reco_meta <- read_csv(file.path(datdir, "processed/recovery_site_table.csv")) 
 
 
 ################################################################################
-#process quadrat data
+# Quadrat data
 ################################################################################
 
 
-#Step 1 - join 2024 and 2025 data
+# Step 1: Combine the 2024 and 2025 source tables.
 
 quad_build1 <- rbind(quad_raw_2024, quad_raw_2025)
-#quickly check that it worked
+# A result of zero indicates that the combined row count matches the inputs.
 nrow(quad_build1)-((nrow(quad_raw_2024)+nrow(quad_raw_2025)))
 
-#Step 2 - process quad data
+# Step 2: Standardize fields and calculate quadrat-level measures.
 quad_build2 <- quad_build1 %>%
   select(-windows_ctrl_alt_shift_0_mac_command_option_shift_0) %>%
-  # Set quadrat to numeric by removing R/L
+  # Remove trailing R/L labels before converting quadrat identifiers to numeric.
   mutate(quadrat = str_remove(quadrat, "[RL]$")) %>%
-  # Set column types
+  # Set the analysis fields to their intended types.
   mutate(
     name_of_data_enterer = factor(name_of_data_enterer),
     site = factor(site),
@@ -77,16 +76,16 @@ quad_build2 <- quad_build1 %>%
     substrate = factor(substrate)
   ) %>%
   ##############################################################################
-  # Extrapolate densities for subsamples
+  # Extrapolate densities from sampled quadrants to the full quadrat.
   ##############################################################################
-  #first change NA to 0 --- these are true zeroes
+  # Missing counts are treated as zero under the current processing convention.
   mutate(across(c(purple_urchins, purple_conceiled, red_urchins, red_conceiled, tegula, pomaulax),
                 ~ replace_na(.x, 0))) %>%
-  #next change subsampled quadrants to 4 if NA --- these are assumed 4
+  # Missing sampled-quadrant counts are assumed to represent all four quadrants.
   mutate(across(c(purple_quadrants_sampled, red_quadrants_sampled, tegula_quadrants_sampled, 
                   pomaulax_quadrants_sampled),
                 ~ replace_na(.x, 4))) %>%
-  #now apply scalar to extrapolate urchin densities to the full quadrat
+  # Scale observed counts to the full four-quadrant area.
   mutate(
     purple_urchin_densitym2 = purple_urchins * (4 / purple_quadrants_sampled),
     purple_urchin_conceiledm2 = purple_conceiled * (4 / purple_quadrants_sampled),
@@ -95,22 +94,22 @@ quad_build2 <- quad_build1 %>%
     tegula_densitym2 = tegula * (4 / tegula_quadrants_sampled),
     pomaulax_densitym2 = pomaulax * (4 / pomaulax_quadrants_sampled)
   ) %>%
-  # Drop old columns
+  # Retain the scaled density fields instead of the original count/effort fields.
   select(-purple_urchins, -purple_conceiled, -purple_quadrants_sampled,
          -red_urchins, -red_conceiled, -red_quadrants_sampled,
          -tegula, -tegula_quadrants_sampled, -pomaulax, -pomaulax_quadrants_sampled) %>%
   ##############################################################################
-  #calculate percent cover
+  # Calculate percent cover from the UPC observations.
   ##############################################################################
-  # Step 1: Convert upc1 through upc8 columns to long format
+  # Put UPC observations in long format so each recorded point is one row.
   pivot_longer(cols = starts_with("upc"), names_to = "upc", values_to = "species") %>%
-  # Remove rows where species is NA (ignoring those UPC points)
+  # Exclude unrecorded points; the denominator is the number of recorded points.
   filter(!is.na(species)) %>%
-  # Group by quadrat and calculate total UPC points per quadrat
+  # Count recorded UPC points within each quadrat.
   group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
            transect, quadrat, substrate) %>%
-  mutate(total_points = n()) %>%  # Calculate total points per quadrat
-  # Calculate percent cover for each species based on the total points that were quantified
+  mutate(total_points = n()) %>%
+  # Calculate each species' share of the recorded points within the quadrat.
   group_by(name_of_data_enterer, site, site_type, zone, survey_date, observer_buddy,
            transect, quadrat, substrate, relief, risk, species, 
            purple_urchin_densitym2, purple_urchin_conceiledm2,
@@ -118,59 +117,53 @@ quad_build2 <- quad_build1 %>%
            tegula_densitym2, pomaulax_densitym2, lamr, macr, macj, nerj, ptej, 
            lsetj, eisj) %>%
   summarise(
-    percent_cover = (n() / first(total_points)) * 100,  # Use total points dynamically for each quadrat
+    percent_cover = (n() / first(total_points)) * 100,
     .groups = 'drop'
   ) %>%
-  # Step 4: Reshape back to wide format with species as columns, adding 'upc_' prefix
+  # Return to wide format, with one cover field per observed species.
   pivot_wider(names_from = species, values_from = percent_cover, values_fill = 0,
               names_prefix = "upc_") %>%
-  # Clean column names and remove any columns with 'na' in the name
+  # Standardize generated names and clean the substrate label.
   clean_names() %>%
-  #clean up
   mutate(substrate = word(substrate, 1)) %>%
-  #clean up
   rename_with(~ str_replace(., "^upc_", "cov_")) %>%
-  #fix relief
+  # Convert relief and risk observations to the derived centimeter/index fields.
   mutate(relief = ifelse(relief == 730, 30, relief),
-         #convert relief to cm -- note: relief was estimated in 10cm increments
+         # Relief was estimated in 10 cm increments.
          relief_cm = relief*10,
-         #calcualte risk index -- note: risk was estimated in 5cm increments
-         risk_cm = (risk*5) + 141.4, #need to add the diagonal distance
-         risk_index = risk_cm - 141.4 #141.4 is the diagonal distance of the quadrat in cm
+         # Risk was estimated in 5 cm increments; include the quadrat diagonal.
+         risk_cm = (risk*5) + 141.4,
+         risk_index = risk_cm - 141.4
   ) %>%
   ##############################################################################
-  # Apply standard site naming
+  # Standardize site names to uppercase letters plus a zero-padded number.
   ##############################################################################
   mutate(
-    # Use a function within str_replace to process each match
     site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
-      # Extract letters and numbers
       parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
-      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      letters <- toupper(parts[, 2])
       numbers <- parts[, 3]
-      # Pad numbers with leading zero
       numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
-      # Combine parts with underscore
       paste0(letters, "_", numbers_padded)
     })) 
 
-#Step 3 - separate 2024 and 2025 to do the site table join, then merge
+# Step 3: Join each survey year to its corresponding site metadata.
 reco_meta_2024 <- reco_meta %>% filter(year(survey_date_2024) == 2024)
 
 quad_build_2024 <- quad_build2 %>% filter(year(survey_date) == 2024) %>%
                       left_join(reco_meta_2024, by = c("site"="site_name_2024", 
                                                        "site_type" = "site_type_2024",
                                                        "zone","survey_date"="survey_date_2024")) %>%
-                      #now we must be very careful to adopt the new site names and types
+                      # Carry official site names and metadata into the output.
                       select(survey_type, region, latitude, longitude,
                              site_official = site_name_2025, site_type_official = site_type_2025,
                              survey_date, zone, transect, quadrat, relief_cm,
                              risk_index, everything()) %>%
                       select(-latitude_old, -longitude_old, -survey_date_2025, -notes,
                              -relief, -risk_cm) %>%
-                      # Drop rows where no official site name was found (these were practice sites)
+                      # Drop rows without an official site name (practice sites).
                       filter(!is.na(site_official)) %>%
-                      # Group and keep only the latest survey per site/year (some sites were resampled)
+                      # Keep the latest survey date for each site, site type, and zone.
                       group_by(
                         site, site_type, zone
                       ) %>%
@@ -189,7 +182,7 @@ quad_build_2025 <- quad_build2 %>% filter(year(survey_date) == 2025) %>%
                                    "zone","survey_date"="survey_date_2025")) %>%
 select(-latitude_old, -longitude_old, -notes,
          -relief, risk_cm) %>%
-  # Group and keep only the latest survey per site/year (some sites were resampled)
+  # Keep the latest survey date for each site, site type, and zone.
   group_by(
     site, site_type, zone
   ) %>%
@@ -200,7 +193,7 @@ select(-latitude_old, -longitude_old, -notes,
   rename(site_official = site, site_type_official = site_type)
 
 
-#join the two dfs together
+# Combine the year-specific quadrat outputs and apply the official site fields.
 ncol(quad_build_2024)
 ncol(quad_build_2025)
 
@@ -208,13 +201,11 @@ quad_build3 <- rbind(quad_build_2024, quad_build_2025) %>%
                 rename(site = site_official, site_type = site_type_official) 
 
 
-#checking
-#check if any instances where conceiled exceeds total counts
+# Diagnostic checks: concealed counts should not exceed total counts.
 quad_build3 %>% filter(purple_urchin_conceiledm2 > purple_urchin_densitym2) 
 quad_build3 %>% filter(red_urchin_conceiledm2 > red_urchin_densitym2) 
 
-#do some tests
-#check for any duplicate sites
+# Diagnostic plot: number of survey dates per site, site type, and zone.
 date_counts <- quad_build3 %>%
   #quad_raw_2025 %>%
   group_by(site, site_type, zone) %>%
@@ -231,7 +222,7 @@ ggplot(date_counts, aes(x = num_dates, y = site, fill = site_type)) +
   ) +
   theme_minimal()
 
-#check for any duplicate sites
+# Diagnostic plot: number of survey dates in the 2025 quadrat output.
 date_counts <- #quad_build3 %>%
   quad_build_2025 %>%
   group_by(site_official, site_type_official, zone) %>%
@@ -249,7 +240,7 @@ ggplot(date_counts, aes(x = num_dates, y = site_official, fill = site_type_offic
   theme_minimal()
 
 
-#check transects
+# Diagnostic plot: transects recorded per 2025 site, site type, and zone.
 
 transect_counts <- quad_raw_2025 %>%
   group_by(site, site_type, zone) %>%
@@ -268,7 +259,7 @@ ggplot(transect_counts, aes(x = num_transects, y = site, fill = site_type)) +
   theme_minimal()
 
 
-#check quadrats
+# Diagnostic plot: unique quadrats recorded per 2024 transect.
 quadrat_counts <- quad_raw_2024 %>%
   group_by(site, site_type, zone, transect) %>%
   summarise(num_quadrats = n_distinct(quadrat), .groups = "drop")
@@ -285,24 +276,25 @@ ggplot(quadrat_counts, aes(x = num_quadrats, y = as.factor(transect), fill = sit
   theme_minimal()
 
 
-#check quadrat names
+# Inspect the quadrat identifiers recorded in the 2025 source table.
 unique(quad_raw_2025$quadrat)
 
 
 ################################################################################
-#Step 2 - process urchin size data
+# Urchin size-frequency data
+################################################################################
 
-#Step 1 - join 2024 and 2025 data
+# Step 1: Combine the 2024 and 2025 source tables.
 
 urchin_build1 <- rbind(urchin_raw_2024, urchin_raw_2025)
-#quickly check that it worked
+# A result of zero indicates that the combined row count matches the inputs.
 nrow(urchin_build1)-((nrow(urchin_raw_2024)+nrow(urchin_raw_2025)))
 
 
-#Step 2 - build raw size fq
+# Step 2: Standardize fields and convert depths to meters.
 urch_build2 <- urchin_build1 %>%
   select(-windows_ctrl_alt_shift_9_mac_command_option_shift_9) %>%
-  # Set column types
+  # Set the analysis fields to their intended types.
   mutate(
     name_of_data_enterer = factor(name_of_data_enterer),
     site = factor(site),
@@ -316,7 +308,7 @@ urch_build2 <- urchin_build1 %>%
     size = factor(size),
     count = as.numeric(count)
   ) %>%
-  #convert feet to meters
+  # Convert recorded feet to meters; other depth units are retained as-is.
   mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
   select(-depth_units, -depth) %>%
   select(name_of_data_enterer, survey_date, everything()) %>%
@@ -324,54 +316,51 @@ urch_build2 <- urchin_build1 %>%
   rename(size_cm = size) %>% 
   select(-date)%>%
   ##############################################################################
-  # Apply standard site naming
+  # Apply the standardized site naming used for quadrat data.
   ##############################################################################
   mutate(
-    # Use a function within str_replace to process each match
     site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
-      # Extract letters and numbers
       parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
-      letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+      letters <- toupper(parts[, 2])
       numbers <- parts[, 3]
-      # Pad numbers with leading zero
       numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
-      # Combine parts with underscore
       paste0(letters, "_", numbers_padded)
     }))
 
-#Step 3 - separate 2024 and 2025 to do the site table join, then merge
+# Step 3: Join each survey year to site metadata and retain the latest survey
+# date within each official site, site type, and zone.
 
 urch_build_2024 <- urch_build2 %>% filter(year(survey_date) == 2024) %>%
   left_join(reco_meta_2024, by = c("site"="site_name_2024", 
                                    "site_type" = "site_type_2024",
                                    "zone","survey_date"="survey_date_2024")) %>%
-  #now we must be very careful to adopt the new site names and types
+  # Carry official site names and metadata into the output.
   select(survey_type, region, latitude, longitude,
          site_official = site_name_2025, site_type_official = site_type_2025,
          survey_date, zone, transect, depth_m, species, size_cm, count) %>%
-  # Drop rows where no official site name was found (these were practice sites)
+  # Drop rows without an official site name (practice sites).
   filter(!is.na(site_official)) %>%
-  # Group and keep only the latest survey per site/year (some sites were resampled)
+  # Keep the latest survey date for each official site, site type, and zone.
   group_by(
     site_official, site_type_official, zone
   ) %>%
   filter(survey_date == max(survey_date, na.rm=TRUE)) %>%
   ungroup() 
 
-#sites dropped in 2024: OK because resmapled REC01 INCIP Shallow, REC04 BAR Deep,
-#REC10 FOR Deep, REC01 INCIP Shallow, REC10 FOR Shallow, MAC01
+# 2024 sites omitted after latest-survey filtering because they were resampled:
+# REC01 INCIP Shallow, REC04 BAR Deep, REC10 FOR Deep, REC10 FOR Shallow, MAC01.
 
 urch_build_2025 <- urch_build2 %>% filter(year(survey_date) == 2025) %>%
   left_join(reco_meta_2025, by = c("site"="site_name_2025", 
                                    "site_type" = "site_type_2025",
                                    "zone","survey_date"="survey_date_2025")) %>%
-  #now we must be very careful to adopt the new site names and types
+  # Carry the site fields into the output.
   select(survey_type, region, latitude, longitude,
          site_official = site, site_type_official = site_type,
          survey_date, zone, transect, depth_m, species, size_cm, count) %>%
-  # Drop rows where no official site name was found (these were practice sites)
+  # Drop rows without a site name.
   filter(!is.na(site_official)) %>%
-  # Group and keep only the latest survey per site/year (some sites were resampled)
+  # Keep the latest survey date for each official site, site type, and zone.
   group_by(
     site_official, site_type_official, zone
   ) %>%
@@ -379,7 +368,7 @@ urch_build_2025 <- urch_build2 %>% filter(year(survey_date) == 2025) %>%
   ungroup() 
 
 
-#join the two dfs together
+# Combine the year-specific urchin size-frequency outputs.
 ncol(urch_build_2024)
 ncol(urch_build_2025)
 
@@ -388,18 +377,19 @@ urch_build3 <- rbind(urch_build_2024, urch_build_2025) %>%
 
 
 ################################################################################
-#Step 3 - process swath data
+# Kelp swath data
+################################################################################
 
-#Step 1 - join 2024 and 2025 data
+# Step 1: Combine the 2024 and 2025 source tables.
 kelp_build1 <- rbind(kelp_raw_2024, kelp_raw_2025)
-#quickly check that it worked
+# A result of zero indicates that the combined row count matches the inputs.
 nrow(kelp_build1)-((nrow(kelp_raw_2024)+nrow(kelp_raw_2025)))
 
 
-#build kelp
+# Step 2: Standardize fields and convert depths to meters.
 kelp_build2 <- kelp_build1 %>%
   select(-windows_ctrl_alt_shift_8_mac_command_option_shift_8) %>%
-  # Set column types
+  # Set the analysis fields to their intended types.
   mutate(
     name_of_data_enterer = factor(name_of_data_enterer),
     site = factor(site),
@@ -412,39 +402,36 @@ kelp_build2 <- kelp_build1 %>%
     species = factor(species),
     count = as.numeric(count)
   ) %>%
-  #convert feet to meters
+  # Convert recorded feet to meters; other depth units are retained as-is.
   mutate(depth_m = ifelse(depth_units == "Feet",depth*0.3048,depth)) %>%
   select(-depth_units, -depth, -date) %>%
   ##############################################################################
-# Apply standard site naming
+# Apply the standardized site naming used in the other data streams.
 ##############################################################################
 mutate(
-  # Use a function within str_replace to process each match
   site = str_replace(site, "([A-Za-z]+)([0-9]+)", function(x) {
-    # Extract letters and numbers
     parts <- str_match(x, "([A-Za-z]+)([0-9]+)")
-    letters <- toupper(parts[, 2])   # Convert to uppercase if needed
+    letters <- toupper(parts[, 2])
     numbers <- parts[, 3]
-    # Pad numbers with leading zero
     numbers_padded <- str_pad(numbers, width = 2, side = "left", pad = "0")
-    # Combine parts with underscore
     paste0(letters, "_", numbers_padded)
   }))
 
-#Step 3 - separate 2024 and 2025 to do the site table join, then merge
+# Step 3: Join each survey year to site metadata and retain the latest survey
+# date within each official site, site type, and zone.
 
 kelp_build_2024 <- kelp_build2 %>% filter(year(survey_date) == 2024) %>%
   left_join(reco_meta_2024, by = c("site"="site_name_2024", 
                                    "site_type" = "site_type_2024",
                                    "zone","survey_date"="survey_date_2024")) %>%
-  #now we must be very careful to adopt the new site names and types
+  # Carry official site names and metadata into the output.
   select(survey_type, region, latitude, longitude,
          site_official = site_name_2025, site_type_official = site_type_2025,
          survey_date, zone, transect, depth_m, species, stipe_counts_macrocystis_only,
          count, subsample_meter) %>%
-  # Drop rows where no official site name was found (these were practice sites)
+  # Drop rows without an official site name (practice sites).
   filter(!is.na(site_official)) %>%
-  # Group and keep only the latest survey per site/year (some sites were resampled)
+  # Keep the latest survey date for each official site, site type, and zone.
   group_by(
     site_official, site_type_official, zone
   ) %>%
@@ -456,14 +443,14 @@ kelp_build_2025 <- kelp_build2 %>% filter(year(survey_date) == 2025) %>%
   left_join(reco_meta_2025, by = c("site"="site_name_2025", 
                                    "site_type" = "site_type_2025",
                                    "zone","survey_date"="survey_date_2025")) %>%
-  #now we must be very careful to adopt the new site names and types
+  # Carry the site fields into the output.
   select(survey_type, region, latitude, longitude,
          site_official = site, site_type_official = site_type,
          survey_date, zone, transect, depth_m, species, stipe_counts_macrocystis_only,
          count, subsample_meter) %>%
-  # Drop rows where no official site name was found (these were practice sites)
+  # Drop rows without a site name.
   filter(!is.na(site_official)) %>%
-  # Group and keep only the latest survey per site/year (some sites were resampled)
+  # Keep the latest survey date for each official site, site type, and zone.
   group_by(
     site_official, site_type_official, zone
   ) %>%
@@ -471,7 +458,7 @@ kelp_build_2025 <- kelp_build2 %>% filter(year(survey_date) == 2025) %>%
   ungroup() 
 
 
-#join the two dfs together
+# Combine the year-specific kelp swath outputs.
 ncol(kelp_build_2024)
 ncol(kelp_build_2025)
 
@@ -480,11 +467,11 @@ kelp_build3 <- rbind(kelp_build_2024, kelp_build_2025) %>%
 
 
 ##############################################################################
-  #calculate macro density
+  # Calculate Macrocystis plant and stipe summaries by transect.
 ##############################################################################
 
 macro_build1 <- kelp_build3 %>% filter(species == "MACPYR") %>%
-    #macro is not subsampled
+    # Macrocystis is not subsampled.
     select(-subsample_meter, -count) %>%
     group_by(survey_date, site, site_type, zone, 
              transect)%>%
@@ -493,24 +480,25 @@ macro_build1 <- kelp_build3 %>% filter(species == "MACPYR") %>%
               macro_stipe_sd_20m2 = sd(stipe_counts_macrocystis_only, na.rm =TRUE),
               ) 
 
-#add true zeros
+# Create a four-transect scaffold from site metadata, join observed summaries,
+# and fill missing macro summary fields with zero under the current convention.
 macro_build2_2024 <- reco_meta_2024 %>%
-  #create list of transects for each site
+  # Create transect rows for each site and survey date.
   select(site = site_name_2025, site_type = site_type_2025, zone, latitude, longitude, 
          survey_date = survey_date_2024)%>%
   mutate(transect = list(1:4)) %>%
   unnest(transect) %>%
-  #add macro
+  # Join the observed Macrocystis summaries.
   left_join(macro_build1 %>% filter(year(survey_date) == 2024)) %>%
   mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
 
 macro_build2_2025 <- reco_meta_2025 %>%
-  #create list of transects for each site
+  # Create transect rows for each site and survey date.
   select(site = site_name_2025, site_type = site_type_2025, zone, latitude, longitude, 
          survey_date = survey_date_2025)%>%
   mutate(transect = list(1:4)) %>%
   unnest(transect) %>%
-  #add macro
+  # Join the observed Macrocystis summaries.
   left_join(macro_build1 %>% filter(year(survey_date) == 2025)) %>%
   mutate(across(c(n_macro_plants_20m2, macro_stipe_density_20m2, macro_stipe_sd_20m2), ~ replace_na(.x, 0)))
 
@@ -518,17 +506,15 @@ macro_build3 <- rbind(macro_build2_2024, macro_build2_2025)
 
 
 ##############################################################################
-#calculate density of all other algae.
-#Note:: Macrocystis is not sub-sampled. All other are. We need to create a 
-#scalar to extrapolate counts to the full transect. 
+# Other kelp and algae densities
+# Macrocystis is handled above. Scale other species' counts from the sampled
+# portion to the full 10 m transect, then reshape species into separate columns.
 ##############################################################################
 
-#need to create scalar for subsample
+# Calculate sampled length, expansion scalar, and density for each record.
 kelp_build4 <- kelp_build3 %>% filter(species != "MACPYR") %>%
   select(-stipe_counts_macrocystis_only) %>%
-  #first fix subsample -- note that some observers recorded the transect 
-  #position rather than the meters sampled. If subsample is >10 then it is transect
-  #position, so we need to fix this. 
+  # Values above 10 are treated as tape positions rather than sampled lengths.
   mutate(linear_meters_sampled = ifelse(subsample_meter < 10, 
                                         subsample_meter,
                                         ifelse(
@@ -540,17 +526,19 @@ kelp_build4 <- kelp_build3 %>% filter(species != "MACPYR") %>%
                                             subsample_meter
                                           )
                                         )),
+         # Missing sampled length is treated as a full 10 m transect.
          linear_meters_sampled = ifelse(is.na(linear_meters_sampled),
                                         10,
                                         linear_meters_sampled
          ),
+         # Expand observed counts to the full 10 m transect.
          scalar = 10/linear_meters_sampled,
          scalar = ifelse(scalar == 0.0, 1, scalar),
          density_20m2 = count*scalar
   )%>%
   select(-linear_meters_sampled, -scalar, -count, -subsample_meter)%>%
   mutate(species = paste0("density20m2_", species)) %>%
-  # Pivot wider by species
+  # Create one density column per species.
   pivot_wider(
     names_from = species, 
     values_from = density_20m2,
@@ -559,7 +547,7 @@ kelp_build4 <- kelp_build3 %>% filter(species != "MACPYR") %>%
   clean_names() 
 
 
-#join with macro
+# Join non-Macrocystis densities to the transect-level Macrocystis summary.
 kelp_build5 <- macro_build3 %>%
   left_join(kelp_build4) %>%
   mutate(across(14:21, ~ replace_na(.x, 0))) %>%
@@ -569,18 +557,19 @@ kelp_build5 <- macro_build3 %>%
 
 
 ################################################################################
-#Step 4 - export
+# Export data
+################################################################################
 
-#rename
+# Assign the final processed data objects.
 quad_data <- quad_build3
 urchin_sizefq <- urch_build3
 kelp_data <- kelp_build5
 
-#save to server first
+# Save the final data objects to the processed recovery directory.
 save(quad_data, urchin_sizefq, kelp_data, file = 
        "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda") #last write 30 Sept 2025
 
-#uplaod to google drive
+# Optional: upload the saved file to Google Drive.
 #drive_upload(
 #  media = "/Volumes/enhydra/data/kelp_recovery/MBA_kelp_forest_database/processed/recovery/kelp_recovery_data.rda",
 #  path = as_id("1nlQtt72vigpL8qroFobFsR5j0nQ_eRZx"),
@@ -589,6 +578,7 @@ save(quad_data, urchin_sizefq, kelp_data, file =
 
 
 
+# Optional CSV exports retained from earlier workflow versions.
 #write.csv(quad_build, file.path(datdir,"processed/recovery/recovery_quad.csv"), row.names = FALSE) #last write 7 April 2025
 #write.csv(urch_build, file.path(datdir,"processed/recovery/recovery_urch_sizefq.csv"), row.names = FALSE) #last write 28 March 2025
 #write.csv(kelp_build1, file.path(datdir,"processed/recovery/recovery_kelpswath.csv"), row.names = FALSE) #last write 28 March 2025
